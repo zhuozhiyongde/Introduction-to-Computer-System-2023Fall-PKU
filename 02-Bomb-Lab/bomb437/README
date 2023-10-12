@@ -1,1 +1,0 @@
-反汇编指令：objdump -d bomb > disassembled_bomb.txt
