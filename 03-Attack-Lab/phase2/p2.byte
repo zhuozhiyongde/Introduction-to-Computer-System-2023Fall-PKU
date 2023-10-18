@@ -1,0 +1,10 @@
+
+p2.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <.text>:
+   0:	48 c7 c7 10 76 a6 11 	mov    $0x11a67610,%rdi
+   7:	68 58 1f 40 00       	push   $0x401f58
+   c:	c3                   	ret    

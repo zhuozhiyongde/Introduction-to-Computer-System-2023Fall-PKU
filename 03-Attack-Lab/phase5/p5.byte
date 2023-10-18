@@ -1,0 +1,26 @@
+
+p5.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <.text>:
+   0:	48 89 e0             	mov    %rsp,%rax
+   3:	c3                   	ret    
+   4:	48 89 c7             	mov    %rax,%rdi
+   7:	c3                   	ret    
+   8:	58                   	pop    %rax
+   9:	90                   	nop
+   a:	c3                   	ret    
+   b:	89 c1                	mov    %eax,%ecx
+   d:	90                   	nop
+   e:	c3                   	ret    
+   f:	89 ca                	mov    %ecx,%edx
+  11:	84 c0                	test   %al,%al
+  13:	c3                   	ret    
+  14:	89 d6                	mov    %edx,%esi
+  16:	20 d2                	and    %dl,%dl
+  18:	c3                   	ret    
+  19:	48 8d 04 37          	lea    (%rdi,%rsi,1),%rax
+  1d:	48 89 c7             	mov    %rax,%rdi
+  20:	c3                   	ret    
