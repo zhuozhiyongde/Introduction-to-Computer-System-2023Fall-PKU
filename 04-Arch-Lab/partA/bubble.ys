@@ -1,0 +1,76 @@
+# Arthals 2110306206@stu.pku.edu.cn
+# 设置初始地址为0
+    .pos 0
+    irmovq stack, %rsp # 设置栈顶
+    call main # 调用main函数
+    halt # 终止程序
+# 设置初始数组
+    .align 8 
+Array:
+    .quad 0xbca
+    .quad 0xcba
+    .quad 0xacb
+    .quad 0xcab
+    .quad 0xabc
+    .quad 0xbac
+
+main:
+    irmovq Array, %rdi
+    irmovq $6, %rsi
+    call bubble_sort
+    ret
+
+bubble_sort:
+    # rsi * 8
+    addq %rsi, %rsi
+    addq %rsi, %rsi
+    addq %rsi, %rsi
+    # 把 rsi 搞成 last，即 init-expr
+    addq %rdi, %rsi
+    # 加减的常数 r13 = 8
+    irmovq $8, %r13
+    subq %r13, %rsi # 初始化 last
+
+# 循环 1 的 text-expr
+test:
+    # last - data <= 0 就结束
+    rrmovq %rsi, %r8 # last
+    subq %rdi, %r8 # last - data
+    jle end # last - data <= 0 跳转
+
+loop1:
+    # rbx 是 i
+    # 第 2 个循环的 init-expr
+    rrmovq %rdi, %rbx # i = data
+    
+test2:
+    rrmovq %rbx, %r8 # i
+    subq %rsi, %r8 # i - last
+    jge end2 # i - last >= 0 跳转
+
+loop2:
+    # *i 是 r11，*(i+1) 是 r10
+    mrmovq $8(%rbx), %r10 # r10 = *(i+1)
+    mrmovq (%rbx), %r11 # r11 = *i
+    rrmovq %r11, %r8 # r12 = *i
+    subq %r10, %r8 # if (*i > *(i+1))
+    jle end4
+    rmmovq %r11, $8(%rbx)
+    rmmovq %r10, (%rbx)
+
+# 循环 2 的 update-expr
+end4:
+    addq %r13, %rbx
+    jmp test2
+
+# 循环 1 的 update-expr
+end2:
+    subq %r13, %rsi
+    jmp test
+
+# 循环 1 判断终止
+end:
+    ret
+
+    .pos 0x200
+stack:

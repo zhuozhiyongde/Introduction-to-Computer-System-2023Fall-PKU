@@ -1,0 +1,44 @@
+# Arthals 2110306206@stu.pku.edu.cn
+# 设置初始地址为0
+    .pos 0
+    irmovq stack, %rsp # 设置栈顶
+    call main # 调用main函数
+    halt # 终止程序
+
+# 设置初始链表
+    .align 8
+ele1:
+    .quad 0x00a
+    .quad ele2
+ele2:
+    .quad 0x0b0
+    .quad ele3
+ele3:
+    .quad 0xc00
+    .quad 0
+
+main:
+    irmovq ele1, %rdi # 设置第一个元素的地址（即链表的头指针）为第一个参数
+    call sum_list # 调用sum_list函数
+    ret # 返回
+
+sum_list:
+    pushq %rbp # 保存rbp
+    xorq %rax, %rax # 将rax(val)置零
+    jmp test # 跳转到test\
+
+loop:
+    mrmovq (%rdi), %rsi # 将rdi指向的地址的值（即链表当前元素的值）赋给rsi
+    addq %rsi, %rax # 将rsi的值加到rax中
+    mrmovq 8(%rdi), %rdi # 将下一个元素的地址赋给rdi
+    jmp test # 跳转到test
+
+test:
+    andq %rdi, %rdi # 比较rdi和0
+    jne loop # 如果不相等，跳转到loop
+    popq %rbp # 恢复rbp
+    ret # 返回
+
+# 设置栈顶地址
+    .pos 0x200
+stack:

@@ -1,0 +1,41 @@
+# Arthals 2110306206@stu.pku.edu.cn
+# 设置初始地址为0
+    .pos 0
+    irmovq stack, %rsp # 设置栈顶
+    call main # 调用main函数
+    halt # 终止程序
+
+# 设置初始链表
+    .align 8
+ele1:
+    .quad 0x00a
+    .quad ele2
+ele2:
+    .quad 0x0b0
+    .quad ele3
+ele3:
+    .quad 0xc00
+    .quad 0
+
+main:
+    irmovq ele1, %rdi
+    call rsum_list
+    ret
+
+rsum_list:
+    andq %rdi, %rdi
+    je base
+    mrmovq (%rdi), %rdx
+    pushq %rdx # 压栈保存局部变量
+    mrmovq $8(%rdi), %rdi
+    call rsum_list # 递归调用
+    popq %rdx # 弹栈恢复局部变量
+    addq %rdx, %rax
+    ret
+
+base:
+    xorq %rax, %rax
+    ret
+
+    .pos 0x200
+stack:
