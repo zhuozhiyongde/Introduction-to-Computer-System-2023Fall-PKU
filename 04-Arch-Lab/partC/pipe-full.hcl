@@ -10,6 +10,7 @@
 #   * valB ← R[rB]
 # * Execute
 #   * valE ← valC+valB
+#	* Set CC
 # * Memory
 # * Write Back
 #   * R[rB] ← valE

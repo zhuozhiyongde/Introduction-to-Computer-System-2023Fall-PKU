@@ -449,7 +449,7 @@ iaddq V, rB：将常量 V 加到 rB 上
 -   PC Update
     -   PC ← valP
 
-> 出于惯例与说明，我们采用 rB 作为 ALU 的寄存器输入源
+> 为什么不能采用 rA 作为寄存器输入源？因为 valC 和 valA 都只能连接到 ALU A，所以只能采用 rB 作为的寄存器输入源，输入到 ALU_B。
 
 正常写就好，没啥难的，只需注意：
 
@@ -1590,6 +1590,14 @@ End:
 > 暂停：插入一个气泡，但是原有指令的状态保留。用于解决各种冒险
 > 气泡：等价于一条 nop 指令，在 ret 之后会插入三个气泡，即三条空指令。这会导致先前各个阶段的状态/寄存器清空。
 
-### 一些别的我觉得可能有用的教程：
+### 一些别的我觉得可能有用的教程
+
+树洞所说，如果你不动 HCL，最优分数应该就是 7.49，任何更低的 CPE 都是因为改了 HCL，我在 Github 和别的地方找到了一些可能有用的链接，在此附上。
 
 [mcginn7 / archlab](https://mcginn7.github.io/2020/02/21/CSAPP-archlab/)：讲的很好，PartC 采用了十路循环展开+三叉树分治的方法，经测试，其给出的代码也可以跑出 CPE 7.49 的满分。
+
+[Veiasai / ics-2017-lab6](https://github.com/Veiasai/ics-2017-lab6)：来自 SJTU 大佬的优化提示
+
+[ idealism-xxm / reading-notes](https://github.com/idealism-xxm/reading-notes/blob/2976a4609b0e76dc7cc69222cd1b9e9de09d06bb/csapp/archlab.md)：讲的也很好的一篇指南，宣称可以跑到 CPE 7.45 但是未经测试。
+
+[ CS-icez / introduction-to-computer-systems ](https://github.com/CS-icez/introduction-to-computer-systems/blob/main/Handin/4%20archlab/ncopy.ys)：21 级卷王王中王，极限的 ncopy.ys 和 pipe-full.hcl 优化，达到了 CPE 3.67 的恐怖分数
