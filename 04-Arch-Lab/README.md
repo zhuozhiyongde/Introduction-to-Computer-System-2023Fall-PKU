@@ -12,7 +12,7 @@
 
 在做本节内容前，推荐安装 VS Code Y86 语法扩展以获得高亮编码体验：
 
-```
+```md
 https://marketplace.visualstudio.com/items?itemName=abhinavk99.y86-vscode
 ```
 
@@ -20,7 +20,7 @@ https://marketplace.visualstudio.com/items?itemName=abhinavk99.y86-vscode
 
 参照给出的示例代码 `y86-code`，总结出如下代码格式并通过：
 
-```assembly
+```asm
 # 设置初始地址为0
     .pos 0
     irmovq stack, %rsp # 设置栈顶
@@ -71,7 +71,7 @@ stack:
 
 也可以采用 `guarded do` 写法，因为注意到 `%rsi` 初始条件必不为零，所以可以改成：
 
-```assembly
+```asm
     .pos 0
     irmovq stack,%rsp
     call main
@@ -124,7 +124,7 @@ stack:
 
 观察到
 
-```
+```md
 %rax:   0x0000000000000000      0x0000000000000cba
 ```
 
@@ -134,7 +134,7 @@ stack:
 
 要求写个递归版本的，因为每次调用函数 val 都会改变，因而需要考虑使用 `pushq/popq` 保留局部变量：
 
-```assembly
+```asm
 # 设置初始地址为0
     .pos 0
     irmovq stack, %rsp # 设置栈顶
@@ -186,7 +186,7 @@ stack:
 
 观察到
 
-```
+```md
 %rax:   0x0000000000000000      0x0000000000000cba
 ```
 
@@ -234,7 +234,7 @@ end:
 
 以下是我 debug 了 2 个小时的代码，你看出来哪里错了吗？
 
-```assembly
+```asm
 # 设置初始地址为0
     .pos 0
     irmovq stack, %rsp # 设置栈顶
@@ -319,7 +319,7 @@ stack:
 
 于是，略作修改就过了：
 
-```assembly
+```asm
 # 设置初始地址为0
     .pos 0
     irmovq stack, %rsp # 设置栈顶
@@ -398,7 +398,7 @@ stack:
 
 ```
 
-```
+```md
 Changes to memory:
 0x0018: 0x0000000000000bca      0x0000000000000abc
 0x0020: 0x0000000000000cba      0x0000000000000acb
@@ -418,7 +418,7 @@ Changes to memory:
 
 在做本节内容前，推荐安装 VS Code HCL 语法扩展以获得高亮编码体验与自动格式化：
 
-```
+```md
 https://marketplace.visualstudio.com/items?itemName=BojunRen.hcl-support
 ```
 
@@ -758,7 +758,7 @@ word new_pc = [
 
 通过！
 
-```
+```md
 ./optest.pl -s ../seq/ssim -ij
 Simulating with ../seq/ssim
   All 59 ISA Checks Succeed
@@ -811,7 +811,7 @@ make drivers && ./benchmark.pl
 
 虽然 handout 中直接给出了直译版本的 ncopy，但是这显然没什么用：
 
-```assembly
+```asm
 # Function prologue.
 # %rdi = src, %rsi = dst, %rdx = len
 ncopy:
@@ -848,7 +848,7 @@ Done:
 
 直接测试发现其 CPE 高达 15.18，收获 0 分的好成绩！
 
-```
+```md
 Average CPE     15.18
 Score   0.0/60.0
 ```
@@ -893,7 +893,7 @@ for(i=0;i<10;i+=2):
 
 首先，我们使用 8 路循环展开（经实测，9/10 路展开也可以获得同样的分数，树洞也有大佬使用 7 路循环展开获得了更极致的分数，但我不知道怎么做就是了）。
 
-```assembly
+```asm
 ncopy:
 	# 8路循环展开，优点是余数处理的时候可以平衡地使用二叉树搜索，从而只需要3次平均判断次数
 	iaddq $-8, %rdx
@@ -955,7 +955,7 @@ update_expr:
 
 我们需要一段代码，类似于：
 
-```assembly
+```asm
 choose_where_to_jmp:
 	if(cnd_for_x):
 		jmp handle_reminder_x
@@ -972,7 +972,7 @@ handle_remainder_0:
 
 那么问题来了，我们如何才能选择应当跳转到那个分支呢？最朴素的思想莫过于一个一个加过去：
 
-```assembly
+```asm
 handle_remainder:
 	# 余数处理，朴素形态，起始 rdx 值为 -8 ~ -1
 	iaddq $1, %rdx
@@ -1003,7 +1003,7 @@ handle_remainder:
 
 但这无疑是十分低效的，回忆起我们在数算 / 计概中学到的 BST 二叉树搜索，以及先前章节学到过的二分代码的汇编表示，我们可以优化这个顺序判断的结构，使之对于任意余数，都只需要 3 次判断就能准确知道应当跳转到那个分支。同时要记得注意细节，减少不必要的加减操作与跳转操作：
 
-```assembly
+```asm
 handle_remainder:
 	# 余数处理，采用平衡二叉树搜索的方式，使得平均判断次数为 3 次
 	# -8 ~ -1 -> -4 ~ 3
@@ -1062,7 +1062,7 @@ handle_remainder_0_to_1:
 
 回想在循环展开中介绍过的技术，再压榨压榨自己的脑子，思考一下示例代码中的判断流程：
 
-```assembly
+```asm
 Loop:
 	mrmovq (%rdi), %r10	# read val from src...
 	rmmovq %r10, (%rsi)	# ...and store it to dst
@@ -1097,7 +1097,7 @@ Loop:
 
 在上述过程中，**所有的气泡其实都可以使用并不相关的其他有效指令替代**，因而我们发现，可以交替使用 “戳气泡” 技术，从而降低 CPE：
 
-```assembly
+```asm
 handle_remainder_A_to_B:
 	iaddq $1, %rdx # ①
 	mrmovq (%rdi), %rbx # ②
@@ -1124,7 +1124,7 @@ handle_remainder_A:
 
 如下就是我们代码的最终版本了：
 
-```assembly
+```asm
 #/* $begin ncopy-ys */
 ##################################################################
 # ncopy.ys - Copy a src block of len words to dst.
@@ -1357,7 +1357,7 @@ End:
 
 另外注释中的加权性能分析是随便说的，不保证正确性。
 
-```assembly
+```asm
 #/* $begin ncopy-ys */
 ##################################################################
 # ncopy.ys - Copy a src block of len words to dst.
