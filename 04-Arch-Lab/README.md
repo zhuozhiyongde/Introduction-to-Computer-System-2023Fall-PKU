@@ -47,7 +47,7 @@ main:
 sum_list:
     pushq %rbp # 保存rbp
     xorq %rax, %rax # 将rax(val)置零
-    jmp test # 跳转到test\
+    jmp test # 跳转到test
 
 loop:
     mrmovq (%rdi), %rsi # 将rdi指向的地址的值（即链表当前元素的值）赋给rsi
