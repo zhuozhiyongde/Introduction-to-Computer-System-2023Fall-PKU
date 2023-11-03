@@ -957,11 +957,13 @@ Summary for official submission (func 0): correctness=1 misses=1567
 ### Handin
 
 首先运行：
+
 ```bash
 python driver.py
 ```
 
 得到结果：
+
 ```md
 Part A: Testing cache simulator
 Running ./test-csim
@@ -1013,5 +1015,7 @@ Trans perf 60x68          10.0        10        1567
 一些别的我觉得可能有用的教程：
 
 [ NFLS-CHINA / CSAPP - Cache Lab的更(最)优秀的解法 ](https://zhuanlan.zhihu.com/p/387662272)：暂存想法的来源，很生动的图示。
+
 [ 孟永康 / 《深入理解计算机系统》配套实验：Cache Lab ](https://zhuanlan.zhihu.com/p/33846811)：很好的解析了为什么尺寸变化会出现冲突。配有测试程序。
+
 [ CS-icez / introduction-to-computer-systems ](https://github.com/CS-icez/introduction-to-computer-systems/blob/main/Handin/4%20archlab/ncopy.ys)：21 级卷王王中王，PartB 260/1148/1467 的成绩。
