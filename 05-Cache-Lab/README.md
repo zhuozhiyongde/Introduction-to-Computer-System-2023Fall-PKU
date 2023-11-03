@@ -340,6 +340,8 @@ int main(int argc, char* argv[]) {
 
 ### 32x32
 
+测试指令：
+
 ```bash
 make && ./test-trans -M 32 -N 32
 ```
