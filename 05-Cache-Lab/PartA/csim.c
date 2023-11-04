@@ -96,6 +96,7 @@ int main(int argc, char* argv[]) {
         printUsage();
         exit(0);
     }
+    // 读取参数
     while ((option = getopt(argc, argv, "hvs:E:b:t:")) != -1) {
         switch (option) {
         case 'h':

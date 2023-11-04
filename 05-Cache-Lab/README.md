@@ -21,9 +21,9 @@ make && ./test-csim
 ```c
 #include <stdlib.h>
 
-FILE* trace_file;
-trace_file = fopen(optarg, "r");
-fscanf(trace_file, "%s %lx,%d\n", &operation, &address, &size) == 3
+FILE* trace_file; // 定义文件指针
+trace_file = fopen(optarg, "r"); // 打开文件
+fscanf(trace_file, "%s %lx,%d\n", &operation, &address, &size) == 3; // 读取文件，返回值为成功读取的参数个数
 ```
 
 `FILE *`：文件指针，指向文件的指针，用于读写文件。
@@ -35,7 +35,8 @@ fscanf(trace_file, "%s %lx,%d\n", &operation, &address, &size) == 3
 #### 参数读取
 
 ```c
-#include <getopt.h>
+#include <getopt.h> // getopt
+#include <stdlib.h> // atoi
 
 int main(int argc, char* argv[]) {
     int option;
@@ -48,7 +49,7 @@ int main(int argc, char* argv[]) {
             v = 1;
             break;
         case 's':
-            s = atoi(optarg); // 外部变量 optarg 指向当前选项参数的指针，stdlib::atoi将字符串转换为整数
+            s = atoi(optarg); // 外部变量 optarg 指向当前选项参数的指针，atoi将字符串转换为整数
             break;
         case 'E':
             E = atoi(optarg);
@@ -70,16 +71,22 @@ int main(int argc, char* argv[]) {
 `getopt(int argc, char * const argv[], const char *optstring)`：解析命令行参数。`argc` 表示参数个数，`argv` 表示参数列表，`optstring` 表示选项字符串，选项字符串中的字母表示选项，冒号表示选项后面需要参数（必填）。返回值为当前选项字母，如果没有选项了则返回 -1。
 
 > 在本例中，选项字符串为 `hvs:E:b:t:`，表示有 5 个选项，其中 `s`、`E`、`b`、`t` 后面需要参数。`h`、`v` 后面不需要参数。
+>
+> 关于 `optarg`，可以理解为是用来保存选项的参数的，而且虽然你没有定义它，但是因为你引入了 `getopt.h` 头文件，所以它是一个外部变量，你可以直接使用它。
 
 `atoi(const char *nptr)`：将字符串转换为整数。
 
 #### 内存分配管理
 
+![CSAPP_3rd_P661_Figure_6.32](./README.assets/Cleanshot-2023-11-04-at-11.36.40@2x.png)
+
+> 注：附图来自英文原版 CSAPP 3rd P661 Figure 6.32
+
 ```c
 struct line {
-    int valid;
-    int tag;
-    int last_used_time;
+    int valid; // 有效位
+    int tag; // 标记
+    int last_used_time; // 最后使用时间
 };
 
 // 定义组，每个组有 E 个行
@@ -101,6 +108,10 @@ for (int i = 0; i < (1 << s); i++) {
 ```
 
 注意结构体使用 `sizeof` 时，要加上 `struct` 关键字。
+
+cache 是一个 set 数组，每个 set 有 E 个 line，每个 line 有 3 个参数，分别是 valid、tag 和 last_used_time。
+
+因而 cache 的类型是 `set*`，即指向 set 的指针，而 set 的类型是 `line*`，即指向 line 的指针。
 
 > `malloc` 和 `calloc` 都是动态分配内存的函数，`malloc` 只分配内存，`calloc` 分配内存并初始化为 0。`malloc` 的参数为分配的字节数，`calloc` 的参数为分配的个数和每个元素的字节数。
 
@@ -130,7 +141,7 @@ case 'S': // Store
 }
 ```
 
-这种写法可以让 `M` 操作直接多执行一次 `useCache` 函数，而不用再写一遍。
+这种写法可以让 `M` 操作直接多执行一次 `useCache` 函数，而不用再写一遍。但是，如果你想追求效率（尽管这个 Part 并不要求）或者想要支持 `-v` 参数，那么你可以直接多给 `useCache` 传递一个 `is_modify` 参数，来判断是否为 `M` 操作。若是，则可以直接令第二次写为 HIT，而不用再次访问缓存。具体实现可以参考我的代码。
 
 值得一提的是，在所有的测试样例中，只有 `mem.trace` 中存在 `M` 操作，而 handout 中给出的测试命令行均没有测试它，也就没有测试 `M` 操作的正确性。你必须使用 `test-csim` 来测试 `M` 操作的正确性。
 
@@ -138,17 +149,25 @@ case 'S': // Store
 
 在 `csim.c` 中，地址是 64 位的，而不是 32 位的。所以你需要使用 `%lx` 来读取地址。同时你不能使用 int 类型来存储地址，而应该使用 `unsigned long` 或者 `__uint64_t` 类型或者 `size_t` 类型（执行的机器是 64 位的）。
 
+另外注意对取地址时，一定要注意是否设置了对于高位（tag 位）的掩码，否则可能会出现段错误（数组越界了）。
+
+```c
+int set_pos = address >> b & ((1 << s) - 1);
+```
+
 #### LRU（Least Recently Used）算法
 
 初始化一个 line 的时候，也许将 `last_used_time` 初始化为 -1 会更好（区别于初始的 timestamp = 0）。因为这样可以判断这个 line 是否被使用过（即判断是否为冷不命中，决定是否要给 eviction 加一）。
 
-在每次执行 `useCache` 的时候，让 `timestamp` 加一，即可维护一个时间戳（而不用使用什么标准库的时间戳）。
+在每次执行 `useCache` 的时候，让 `timestamp` 加一，即可维护一个时间戳（而不用使用什么标准库的时间戳，那样会导致两个问题，一个是可能精度不够（每次执行 `useCache` 的时间间隔可能太短），另一个是可能还要处理浮点数问题）。
 
 同时，在遍历一个组的时候，你可以合并遍历和查找最小时间戳的操作，这样可以减少一次遍历。
 
 #### 其他
 
 `printSummary()` 函数定义在 `cachelab.h` 中，所以你需要在 `csim.c` 中引入 `cachelab.h` 头文件。
+
+`puts` 和 `printf` 函数都可以用来输出字符串，但是 `puts` 函数会自动在字符串后面加上换行符，而 `printf` 函数不会。
 
 ```c
 #include "cachelab.h"
@@ -257,6 +276,7 @@ int main(int argc, char* argv[]) {
         printUsage();
         exit(0);
     }
+    // 读取参数
     while ((option = getopt(argc, argv, "hvs:E:b:t:")) != -1) {
         switch (option) {
         case 'h':
@@ -334,9 +354,39 @@ int main(int argc, char* argv[]) {
 
 ```
 
+运行：
+
+```bash
+make && ./test-csim
+```
+
+得到：
+
+```text
+                        Your simulator     Reference simulator
+Points (s,E,b)    Hits  Misses  Evicts    Hits  Misses  Evicts
+     3 (1,1,1)       9       8       6       9       8       6  traces/yi2.trace
+     3 (4,2,4)       4       5       2       4       5       2  traces/yi.trace
+     3 (2,1,4)       2       3       1       2       3       1  traces/dave.trace
+     3 (2,1,3)     694     453     449     694     453     449  traces/mem.trace
+     3 (2,2,3)     201      37      29     201      37      29  traces/trans.trace
+     3 (2,4,3)     212      26      10     212      26      10  traces/trans.trace
+     3 (5,1,5)     231       7       0     231       7       0  traces/trans.trace
+     6 (5,1,5)  265189   21777   21745  265189   21777   21745  traces/long.trace
+    27
+
+TEST_CSIM_RESULTS=27
+```
+
+大功告成！
+
 ## PartB
 
-缓存参数：`s = 5, E = 1, b = 5`
+缓存参数：`s = 5, E = 1, b = 5`。
+
+所以这是一个有 32 个组（$ S = 2^s = 32 $）的直接映射高速缓存（$ E = 1 $），每个组只有 1 个块，每个块有 32 个字节（$ B = 2^b = 32 $）。
+
+也就是说，一共可以放得下 1024 个字节，即 256 个 int。
 
 ### 32x32
 
@@ -345,6 +395,8 @@ int main(int argc, char* argv[]) {
 ```bash
 make && ./test-trans -M 32 -N 32
 ```
+
+满分线：misses <= 300。
 
 观察到示例转置函数的结果：`hits:869, misses:1184, evictions:1152`
 
@@ -381,7 +433,7 @@ S 14e8a0,4 miss eviction
 
 于是，我们要利用书上讲过的分块技巧，将 32x32 的矩阵分成 8x8 的小块，这样就可以充分利用局部性，读 A 一次连续读入 8 个元素，然后转置，再连续写入 B。
 
-同时我们使用多个局部变量来存储从 A 读出来的数据，这样可以避免 `读A->写B->读A->写B` 的冲突。
+同时我们使用多个局部变量来存储从 A 读出来的数据，这样可以最大化地利用局部性。
 
 ```c
 void transpose_submit(int M, int N, int A[N][M], int B[M][N]) {
@@ -443,12 +495,12 @@ func 0 (Transpose submission): hits:1765, misses:288, evictions:256
 
 注意到理论 MISS 数应当是 `16(块数) * [8(读A)+8(写B)] = 256` 次，为什么会多出来 32 次呢？
 
-这是因为当 i=j 时，A[i][j] 和 B[i][j] 的组数是一样的，所以每次对角线上会额外出现 8 次 MISS：
+这是因为当 i=j 时，`A[i][j]` 和 `B[i][j]` 的组数是一样的，所以每次对角线上会额外出现 8 次 MISS：
 
--   写 B 的第 i 列，导致 A 的第 i+1 行被驱逐
--   读 A 的第 i+1 行，导致 B 的第 i+1 列被驱逐
--   写 B 的第 i+1 列，冲突不命中
--   ...
+1.  写 B 的第 i 列，导致 A 的第 i+1 行被驱逐
+2.  读 A 的第 i+1 行，导致 B 的第 i+1 列被驱逐
+3.  写 B 的第 i+1 列，冲突不命中
+4.  ...
 
 有没有什么优化方法呢？当然是有的，我们可以先将 A 的一个块完整、不转置地复制到 B，然后再转置 B，这样对 B 的写因为 B 已经完全加载到了缓存中，所以不会出现任何的不命中
 
@@ -525,6 +577,8 @@ Summary for official submission (func 0): correctness=1 misses=260
 make && ./test-trans -M 64 -N 64
 ```
 
+满分线：misses <= 1300。
+
 首先，我们直接使用 32x32 中的代码：
 
 ```c
@@ -533,7 +587,7 @@ if (M == 32 || M==64){...}
 
 得到输出：
 
-```bash
+```md
 Summary for official submission (func 0): correctness=1 misses=3332
 ```
 
@@ -586,7 +640,13 @@ Summary for official submission (func 0): correctness=1 misses=1604
 
 收获了 4.5 分，但是仍然不够理想。
 
-那么如何优化呢？既然直接 8x8 分块不行，那我们就先 8x8 分大块，再在每个大块内 4x4 分小块，然后注意，读完 A 的第一行（8 个 int）后，我们将前 4 个正常转置并写入 B，然后将后 4 个先放到一个暂时存储块中，这样就可以避免写下半块时的冲突不命中了。
+注意这里不能采用 4x8 分块，因为这样虽然可以避免 A 矩阵的读的冲突不命中，但是 B 矩阵的写的冲突不命中仍然存在。
+
+不过这也启发了我们，既然可以通过 4x8 分块首先避免对于 A 矩阵的读的冲突不命中，那么 B 矩阵的写的冲突不命中是不是可以通过“暂时性”地将后 4 个元素先放到同一行的块里来避免呢？
+
+![cache64x64](./README.assets/cache64x64.jpg)
+
+于是我们得到了优化思路：既然直接 8x8 分块不行，那我们就先 8x8 分大块，再在每个大块内 4x4 地分小块，然后注意，读完 A 的第一行（8 个 int）后，我们将前 4 个正常转置并写入 B，然后将后 4 个先放到一个暂时存储块中，这样就可以避免写下半块时的冲突不命中了。
 
 ```c
 for (int i = 0; i < N; i += 8) { // 当前行
@@ -620,7 +680,7 @@ for (int i = 0; i < N; i += 8) { // 当前行
 
 注：Sub_Block 说的是分完后的 2x2 的矩阵（每个元素是一个 4x4 的矩阵）。
 
-此时，已经转置完毕 B_Sub_Block[0][0]，而转置好的 B_Sub_Block[1][0] 暂时位于 B_Sub_Block[0][1]。
+此时，已经转置完毕 `B_Sub_Block[0][0]`（左上矩阵），而转置好的 `B_Sub_Block[1][0]`（左下矩阵）暂时位于 `B_Sub_Block[0][1]`（右上矩阵）。
 
 同时，A 的前四行已经完全被读完并用完了。所以我们可以放心的开始读 A 的后四行了。
 
@@ -657,11 +717,11 @@ for (int k = 0;k < 4;++k) {
 }
 ```
 
-这里我们已经将 B_Sub_Block[1][0] 交换回正确的位置，以及转置了 B_Sub_Block[0][1]。
+这里我们已经将 `B_Sub_Block[1][0]`（左下矩阵）交换回正确的位置，以及转置了 `B_Sub_Block[0][1]`（右上矩阵）。
 
-注意我们先读 A 再读 B，经测试这样比先读 B 再读 A 要好。因为这样的话，读 B_Sub_Block[0][1]（实际上存的是 B_Sub_Block[1][0]） 接写 B_Sub_Block[0][1] 可以避免 MISS。
+注意我们先读 A 再读 B，经测试这样比先读 B 再读 A 要好。因为这样的话，读 `B_Sub_Block[0][1]`（右上矩阵）（实际上存的是 `B_Sub_Block[1][0]`（左下矩阵）） 接写 `B_Sub_Block[0][1]` （右上矩阵）可以避免 MISS。
 
-而 B_Sub_Block[1][1] 仍然没做操作，我们使用类似 32x32 中的先复制再转置的方法，将 B_Sub_Block[1][1] 转置好。
+而 `B_Sub_Block[1][1]`（右下矩阵）仍然没做操作，我们使用类似 32x32 中的先复制再转置的方法，将 `B_Sub_Block[1][1]`（右下矩阵）转置好。
 
 ```c
 // 复制 A_Sub_Block[1][1] 到 B_Sub_Block[1][1]
@@ -795,9 +855,9 @@ make && ./test-trans -M 64 -N 64
 Summary for official submission (func 0): correctness=1 misses=1148
 ```
 
-距离理论最优值 1024 仍然有一定差距，但是已经很接近了，而且已经收获了满分。
+距离理论最优值 1024（8x8 分块，64 个块，每个块 16 次 miss） 仍然有一定差距，但是已经很接近了，而且已经收获了满分。
 
-如果你想继续优化，显然是要特别处理对角线上的块的，因为他们每次都会出现冲突不命中，所以可以通过先复制到一个临时块这样的方法来避免，这里就不展开了 **（才不是懒得卷了）**。
+如果你想继续优化，显然是要特别处理对角线上的块的，因为他们每次都会出现冲突不命中，所以可以通过先复制到一个临时块这样的方法来避免，这里就不展开了 ~~（才不是懒得卷了）~~。
 
 ### 60x68
 
@@ -806,6 +866,8 @@ Summary for official submission (func 0): correctness=1 misses=1148
 ```bash
 make && ./test-trans -M 60 -N 68
 ```
+
+满分线：misses <= 1600。
 
 首先尝试 4x4 分块：
 
@@ -964,7 +1026,7 @@ python driver.py
 
 得到结果：
 
-```md
+```text
 Part A: Testing cache simulator
 Running ./test-csim
                         Your simulator     Reference simulator
@@ -1014,7 +1076,7 @@ Trans perf 60x68          10.0        10        1567
 
 一些别的我觉得可能有用的教程：
 
-[ NFLS-CHINA / CSAPP - Cache Lab的更(最)优秀的解法 ](https://zhuanlan.zhihu.com/p/387662272)：暂存想法的来源，很生动的图示。
+[ NFLS-CHINA / CSAPP - Cache Lab 的更(最)优秀的解法 ](https://zhuanlan.zhihu.com/p/387662272)：暂存想法的来源，很生动的图示。
 
 [ 孟永康 / 《深入理解计算机系统》配套实验：Cache Lab ](https://zhuanlan.zhihu.com/p/33846811)：很好的解析了为什么尺寸变化会出现冲突。配有测试程序。
 
