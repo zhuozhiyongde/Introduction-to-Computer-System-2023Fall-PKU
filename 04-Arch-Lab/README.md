@@ -125,7 +125,7 @@ stack:
 观察到
 
 ```md
-%rax:   0x0000000000000000      0x0000000000000cba
+%rax: 0x0000000000000000 0x0000000000000cba
 ```
 
 成功！
@@ -187,7 +187,7 @@ stack:
 观察到
 
 ```md
-%rax:   0x0000000000000000      0x0000000000000cba
+%rax: 0x0000000000000000 0x0000000000000cba
 ```
 
 成功！
@@ -400,14 +400,14 @@ stack:
 
 ```md
 Changes to memory:
-0x0018: 0x0000000000000bca      0x0000000000000abc
-0x0020: 0x0000000000000cba      0x0000000000000acb
-0x0028: 0x0000000000000acb      0x0000000000000bac
-0x0030: 0x0000000000000cab      0x0000000000000bca
-0x0038: 0x0000000000000abc      0x0000000000000cab
-0x0040: 0x0000000000000bac      0x0000000000000cba
-0x01f0: 0x0000000000000000      0x0000000000000065
-0x01f8: 0x0000000000000000      0x0000000000000013
+0x0018: 0x0000000000000bca 0x0000000000000abc
+0x0020: 0x0000000000000cba 0x0000000000000acb
+0x0028: 0x0000000000000acb 0x0000000000000bac
+0x0030: 0x0000000000000cab 0x0000000000000bca
+0x0038: 0x0000000000000abc 0x0000000000000cab
+0x0040: 0x0000000000000bac 0x0000000000000cba
+0x01f0: 0x0000000000000000 0x0000000000000065
+0x01f8: 0x0000000000000000 0x0000000000000013
 ```
 
 ## PartB
@@ -761,16 +761,16 @@ word new_pc = [
 ```md
 ./optest.pl -s ../seq/ssim -ij
 Simulating with ../seq/ssim
-  All 59 ISA Checks Succeed
+All 59 ISA Checks Succeed
 ./jtest.pl -s ../seq/ssim -ij
 Simulating with ../seq/ssim
-  All 96 ISA Checks Succeed
+All 96 ISA Checks Succeed
 ./ctest.pl -s ../seq/ssim -ij
 Simulating with ../seq/ssim
-  All 22 ISA Checks Succeed
+All 22 ISA Checks Succeed
 ./htest.pl -s ../seq/ssim -ij
 Simulating with ../seq/ssim
-  All 756 ISA Checks Succeed
+All 756 ISA Checks Succeed
 ```
 
 ## PartC
@@ -849,8 +849,8 @@ Done:
 直接测试发现其 CPE 高达 15.18，收获 0 分的好成绩！
 
 ```md
-Average CPE     15.18
-Score   0.0/60.0
+Average CPE 15.18
+Score 0.0/60.0
 ```
 
 那么我们有什么办法来优化这个程序呢？
@@ -943,7 +943,8 @@ update_expr:
 -   `andq` Memory 访存阶段
 -   `rmovq` Execute 执行阶段
 -   `jle` Decode 解码阶段
-    此时，`jle` 可以立即使用正确的 M_Cnd，避免控制冒险，即在 Decode 解码阶段就可以知道是否需要跳转，避免了预测失败时的 2 个气泡周期的惩罚。
+
+此时，`jle` 可以立即使用正确的 M_Cnd，避免控制冒险，即在 Decode 解码阶段就可以知道是否需要跳转，避免了预测失败时的 2 个气泡周期的惩罚。
 
 其他细节请参见代码注释。
 
@@ -1595,7 +1596,7 @@ End:
 
 ### 一些别的我觉得可能有用的教程
 
-树洞所说，如果你不动 HCL，最优分数应该就是 7.49，任何更低的 CPE 都是因为改了 HCL，我在 Github 和别的地方找到了一些可能有用的链接，在此附上。
+按照树洞所说，如果你不动 HCL，最优分数应该就是 7.49，任何更低的 CPE 都是因为改了 HCL，我在 Github 和别的地方找到了一些可能有用的链接，在此附上。
 
 [mcginn7 / archlab](https://mcginn7.github.io/2020/02/21/CSAPP-archlab/)：讲的很好，PartC 采用了十路循环展开 + 三叉树分治的方法，经测试，其给出的代码也可以跑出 CPE 7.49 的满分。
 
