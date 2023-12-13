@@ -448,7 +448,7 @@ static inline void get_range(size_t index) {
         break;
     case 14:
         low_range = 61440;
-        high_range = 0x7fffffff;
+        high_range = 0xffffffff;
         break;
     }
 }
@@ -481,14 +481,14 @@ static inline size_t adjust_alloc_size(size_t size) {
  * 首次适配
  */
 static inline void* find_fit(size_t asize) {
-    int seg_index = get_index(asize);
+    int num = get_index(asize);
     char* bp;
     // 首次适配
-    for (;seg_index < FREE_LIST_NUM; seg_index++) {
-        for (bp = free_lists[seg_index]; bp != mem_heap_lo(); bp = NEXT_NODE(bp)) {
-            long spare = GET_SIZE(HDRP(bp)) - asize;
-            // 找到了更合适的块，返回
-            if (spare >= 0) {
+    for (;num < FREE_LIST_NUM; num++) {
+        // 遍历当前桶
+        for (bp = free_lists[num]; bp != mem_heap_lo(); bp = NEXT_NODE(bp)) {
+            // 找到了合适的块，返回
+            if (GET_SIZE(HDRP(bp)) >= asize) {
                 return bp;
             }
         }
