@@ -40,7 +40,7 @@ malloc lab 堪称 ics 课程最难的 Lab，没有之一。
 分配器的实现可以分为：
 
 -   隐式空闲链表：空闲块和分配块交错存放，没有额外的链表结构来供快速定位空闲块，每次分配都需要遍历整个堆。
--   显式空闲链表：在隐式链表的结构基础上，额外维护一个链表结构，用于快速定位空闲块。
+-   显式空闲链表：在隐式链表的结构基础上，利用空闲块释放后，“被空出的有效负载”，额外维护一个链表结构，用于快速定位空闲块。
 -   分离空闲链表：在显式空闲链表的基础上，将空闲块按照大小分成不同的链表，每次分配时，只需要遍历大小合适的链表（如果没找到的话，继续遍历分类上 size 更大的链表），而不是整个堆。
 
 查找空闲块以分配的策略：
@@ -129,8 +129,10 @@ Perf index = 50 (util) & 0 (thru) = 50/100
 ### 代码禁令
 
 -   禁止使用标准库代码、示例代码直接提交
--   禁止任何全局数组
+-   禁止任何全局数组、树、链表
 -   禁止抄袭
+
+> 为什么禁止使用全局数组？试想一下我们如果允许全局数组，那么直接在代码里声明一个 1GB 的数组，每次需要什么都直接从这个数组里给，那么根本不会涉及堆的分配，空间利用率甚至可以趋于正无穷，这显然是很离谱的。
 
 ### 关于数据
 
@@ -1105,11 +1107,11 @@ process_traces("traces")
  * 首次适配
  */
 static inline void* find_fit(size_t asize) {
-    int seg_index = get_index(asize);
+    int num = get_index(asize);
     char* bp;
     // 首次适配
-    for (;seg_index < FREE_LIST_NUM; seg_index++) {
-        for (bp = free_lists[seg_index]; bp != mem_heap_lo(); bp = NEXT_NODE(bp)) {
+    for (;num < FREE_LIST_NUM; num++) {
+        for (bp = free_lists[num]; bp != mem_heap_lo(); bp = NEXT_NODE(bp)) {
             long spare = GET_SIZE(HDRP(bp)) - asize;
             // 找到了更合适的块，返回
             if (spare >= 0) {
@@ -1195,7 +1197,9 @@ static inline void insert_node(void* bp, size_t size) {
 }
 ```
 
-根据同学指正，此处还有一个优化点：插入链表的时候可以对前 k 个元素做一次插入排序，插到前 k 个元素中的正确位置，从而可以保证前 k 个元素是有序的，这样就可以提高查找时的效率（相当于做了一点点的 best fit）。
+根据同学指正，此处还有一个优化点：插入链表的时候可以对前 k 个元素做一次插入排序（即部分排序），插到前 k 个元素中的正确位置，从而可以保证前 k 个元素是有序的，这样就可以提高查找时的效率（相当于做了一点点的 best fit）。
+
+注意这里一定不能做完全排序，因为这样会导致插入的时间复杂度变为 O (logn)，从而导致吞吐量巨幅下降。
 
 ### 删除空闲块 `delete_node(bp)`
 
@@ -1366,33 +1370,39 @@ void mm_checkfreelist(int lineno) {
 ```bash
 Results for mm malloc:
   valid  util   ops    secs     Kops  trace
-   yes    86%  100000  0.006164 16224 ./traces/alaska.rep
- * yes    99%    4805  0.000647  7429 ./traces/amptjp.rep
- * yes    83%    4162  0.000223 18667 ./traces/bash.rep
- * yes    77%   57716  0.001962 29415 ./traces/boat.rep
- * yes    78%  100000  0.003509 28500 ./traces/boat-plus.rep
+   yes    86%  100000  0.006152 16254 ./traces/alaska.rep
+ * yes    99%    4805  0.000625  7688 ./traces/amptjp.rep
+ * yes    83%    4162  0.000219 18964 ./traces/bash.rep
+ * yes    77%   57716  0.001926 29966 ./traces/boat.rep
+ * yes    78%  100000  0.003407 29349 ./traces/boat-plus.rep
  u yes    90%      --        --    -- ./traces/binary2-bal.rep
- * yes    99%    5032  0.000558  9024 ./traces/cccp.rep
- * yes    99%    5848  0.000597  9791 ./traces/cccp-bal.rep
- * yes    76%   11991  0.000599 20031 ./traces/chrome.rep
- * yes    99%   20000  0.000716 27925 ./traces/coalesce-big.rep
-   yes    66%   14400  0.000361 39851 ./traces/coalescing-bal.rep
-   yes   100%      15  0.000012  1231 ./traces/corners.rep
- * yes    99%    5683  0.000935  6077 ./traces/cp-decl.rep
+ * yes    99%    5032  0.000553  9105 ./traces/cccp.rep
+ * yes    99%    5848  0.000595  9826 ./traces/cccp-bal.rep
+ * yes    76%   11991  0.000588 20387 ./traces/chrome.rep
+ * yes    99%   20000  0.000705 28363 ./traces/coalesce-big.rep
+   yes    66%   14400  0.000351 40982 ./traces/coalescing-bal.rep
+   yes   100%      15  0.000012  1228 ./traces/corners.rep
+ * yes    99%    5683  0.000926  6138 ./traces/cp-decl.rep
  u yes    71%      --        --    -- ./traces/exhaust.rep
- * yes   100%    5380  0.000951  5657 ./traces/expr-bal.rep
- * yes    84%   99544  0.004906 20289 ./traces/firefox-reddit2.rep
- * yes    98%   55092  0.002247 24523 ./traces/freeciv.rep
-   yes    33%      10  0.000011   896 ./traces/malloc.rep
-   yes    27%      17  0.000011  1522 ./traces/malloc-free.rep
- p yes     --    1494  0.000101 14757 ./traces/perl.rep
- * yes    93%    4800  0.001049  4578 ./traces/random.rep
- * yes    92%    4800  0.001034  4641 ./traces/random2.rep
-   yes    30%   14401  0.091832   157 ./traces/realloc.rep
-16 15     90%  386347  0.020034 19285
+ * yes   100%    5380  0.000934  5758 ./traces/expr-bal.rep
+ * yes    84%   99544  0.004843 20554 ./traces/firefox-reddit2.rep
+ * yes    98%   55092  0.002232 24684 ./traces/freeciv.rep
+   yes    33%      10  0.000011   899 ./traces/malloc.rep
+   yes    27%      17  0.000011  1520 ./traces/malloc-free.rep
+ p yes     --    1494  0.000100 14947 ./traces/perl.rep
+ * yes    93%    4800  0.001033  4648 ./traces/random.rep
+ * yes    92%    4800  0.001032  4651 ./traces/random2.rep
+   yes    30%   14401  0.092237   156 ./traces/realloc.rep
+16 15     90%  386347  0.019719 19593
 
 Perf index = 60 (util) & 40 (thru) = 100/100
 ```
+
+如果你没满分，那么你可以参照这个数据来确定你的哪个测试点应当调整。当然，各年的数据可能存在差异，所以仅供参考。
+
+实际 autolab 评测的 KOPS 可能会和本地评测不一致，如我的 autolab 实际评测为 15218 KOPS，但本地评测为 19593 KOPS。这可能和本地 /autolab 的机器性能有关。
+
+如果你实在闲得无聊想卷 KOPS，一个可能的方法是减少所有的变量赋值，而全部转为宏定义或者行内比较，这样可以减少一定的指令数，从而提高吞吐量。
 
 ## Debug
 
