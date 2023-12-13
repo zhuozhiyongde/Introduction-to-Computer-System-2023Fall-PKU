@@ -1,4 +1,4 @@
-# Attack Lab
+# 更适合北大宝宝体质的 Attack Lab 踩坑记
 
 ## Phase 1
 
