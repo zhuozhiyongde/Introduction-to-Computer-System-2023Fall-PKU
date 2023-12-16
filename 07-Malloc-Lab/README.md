@@ -122,6 +122,16 @@ Perf index = 50 (util) & 0 (thru) = 50/100
 
 如果你使用了显式空闲链表，那么你还需要实现一个函数如 `mm_checkfreelist` 来检查空闲链表的正确性。
 
+注意，你需要手动的调用 `mm_checkheap` 来检查堆的正确性，或者使用以下指令，每次调用后检查：
+
+```bash
+make && ./mdriver -D
+```
+
+若使用上述命令，可能会因为 `mm_checkheap` 的调用次数过多而导致无法跑出结果，所以只是看有没有大批量的打印即可，若需终止，按下 `Ctul+C` 即可。
+
+同样的，如果你还实现了 `mm_checkfreelist`，那么你可以把他放在 `mm_checkheap` 中调用。
+
 #### 风格分
 
 风格分要求你在文档前写实现思路，在函数前些函数注释，在某些比较难懂的地方也要写注释。
@@ -1253,6 +1263,7 @@ void mm_checkheap(int lineno) {
     }
     // 移动指针到序言块之后
     bp += DSIZE;
+    // 初始化为1而不是2，用以辨别初始状态（即指针指向堆底时）
     size_t is_prev_alloc = 1;
     size_t is_prev_free = 0;
 
@@ -1265,13 +1276,13 @@ void mm_checkheap(int lineno) {
         if (GET_SIZE(HDRP(bp)) == 0) {
             dbg_printf("[%d]Block Header Error: block size is invalid at %p\n", lineno, bp);
         }
-        // 检查头部是否正确标记上一个块是否分配
+        // 指针并非指向堆底时，检查头部是否正确标记上一个块是否分配
         if (is_prev_alloc != 1) {
             if (GET_PREV_ALLOC(HDRP(bp)) != is_prev_alloc) {
                 dbg_printf("[%d]Block Header Error: prev alloc bit is incorrect at %p\n", lineno, bp);
             }
         }
-        is_prev_alloc = GET_ALLOC(HDRP(bp)) << 1;
+        is_prev_alloc = GET_ALLOC(HDRP(bp));
 
         // 对于空闲块，检查头部尾部是否一致
         if (!GET_ALLOC(HDRP(bp))) {
@@ -1312,6 +1323,10 @@ void mm_checkheap(int lineno) {
     }
 }
 ```
+
+注意，你需要手动的调用 `mm_checkheap` 来检查堆的正确性。调用前你需要在文件开头定义 `#define DEBUG` 的宏，以开启调试模式。
+
+具体的调试方法请详见上文中的 “测试分” 一节。
 
 ### 检查空闲链表的正确性 `mm_checkfreelist(lineno)`
 
@@ -1364,6 +1379,8 @@ void mm_checkfreelist(int lineno) {
     }
 }
 ```
+
+同上。
 
 ## 测试结果与评分
 
@@ -1421,6 +1438,8 @@ Perf index = 60 (util) & 40 (thru) = 100/100
 > 读 mdriver.c 并改写来提供更多错误信息
 >
 > 先用 ls -l 找小的 trace 来测试
+
+注：这里指的 `去掉 -O3`，应该是指在 `Makefile` 中将 `CFLAGS` 中的 `-O3` 去掉（或换成 `-O2`），以降低优化等级，从而方便调试。
 
 ## 参考链接
 

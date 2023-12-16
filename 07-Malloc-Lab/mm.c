@@ -601,6 +601,7 @@ void mm_checkheap(int lineno) {
     }
     // 移动指针到序言块之后
     bp += DSIZE;
+    // 初始化为1而不是2，用以辨别初始状态（即指针指向堆底时）
     size_t is_prev_alloc = 1;
     size_t is_prev_free = 0;
 
@@ -613,13 +614,13 @@ void mm_checkheap(int lineno) {
         if (GET_SIZE(HDRP(bp)) == 0) {
             dbg_printf("[%d]Block Header Error: block size is invalid at %p\n", lineno, bp);
         }
-        // 检查头部是否正确标记上一个块是否分配
+        // 指针并非指向堆底时，检查头部是否正确标记上一个块是否分配
         if (is_prev_alloc != 1) {
             if (GET_PREV_ALLOC(HDRP(bp)) != is_prev_alloc) {
                 dbg_printf("[%d]Block Header Error: prev alloc bit is incorrect at %p\n", lineno, bp);
             }
         }
-        is_prev_alloc = GET_ALLOC(HDRP(bp)) << 1;
+        is_prev_alloc = GET_ALLOC(HDRP(bp));
 
         // 对于空闲块，检查头部尾部是否一致
         if (!GET_ALLOC(HDRP(bp))) {
