@@ -37,7 +37,7 @@ Proxy lab 是 ICS 课程的最后一个 lab，其要求我们实现一个 HTTP �
 
     最后一行命令是将 `chromedriver` 移动到 `/usr/local/bin/` 目录（即默认环境变量 `$PATH` 检索的位置）下，这样就可以在任意目录下使用 `chromedriver` 命令用以启动驱动。
 
--   [Selenium](https://www.selenium.dev/)：Selenium 是一个自动化测试工具，可以用于模拟浏览器行为。如果你之前接触过爬虫，你可能会比较熟悉这个框架。这个框架用以启动测试的 Python 脚本 `webdriver_test.py`，你可以使用如下命令行安装（如果安装不畅，请考虑使用第二行换源指令：
+-   [Selenium](https://www.selenium.dev/)：Selenium 是一个自动化测试工具，可以用于模拟浏览器行为。如果你之前接触过爬虫，你可能会比较熟悉这个框架。这个框架用以启动测试的 Python 脚本 `webdriver_test.py`，你可以使用如下命令行安装（如果安装不畅，请考虑使用第二行换源指令）：
 
     ```bash
     pip3 install selenium
@@ -1099,10 +1099,20 @@ clean:
 # 编译并运行代理服务器
 make clean && make && ./proxy 7777 &
 # 编译并运行内容服务器
-(cd ./tiny && make clean && make) && ./tiny/tiny 7778 &
+cd ./tiny && make clean && make && ./tiny 7778 & cd ..
 # 测试
 curl -v --proxy http://localhost:7777 http://localhost:7778/
 ```
+
+提醒一下，`tiny` 一定要在 `./tiny` 目录下运行，否则会找不到文件。另外第二行看似在 `./tiny 7778 &` 和 `cd ..` 之间少了一个 `&&` 连接，但是实际上这反而是正确做法，因为标志后台运行的 `&` 和命令连接的 `&&` 的不能连着同时使用。
+
+另外，任何时候当你发现搞出来一个意外的 `tiny` 进程或者僵尸进程时，你总是可以或新开一个终端或直接执行如下指令：
+
+```bash
+pkill tiny
+```
+
+来杀死所有的 `tiny` 进程。
 
 得到如下的输出，就代表成功啦！
 
@@ -1115,7 +1125,7 @@ curl -v --proxy http://localhost:7777 http://localhost:7778/
 > Accept: */*
 > Proxy-Connection: Keep-Alive
 >
-Accepted connection from (localhost, 60352)
+Accepted connection from (localhost, 55150)
 GET / HTTP/1.0
 Host: localhost:7778
 Accept: */*
@@ -1123,16 +1133,32 @@ Connection: close
 Proxy-Connection: close
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.3) Gecko/20120305 Firefox/10.0.3
 
+Response headers:
+HTTP/1.0 200 OK
+Server: Tiny Web Server
+Connection: close
+Content-length: 120
+Vary: *
+Cache-Control: no-cache, no-store, must-revalidate
+Content-type: text/html
+
 * Mark bundle as not supporting multiuse
 * HTTP 1.0, assume close after body
-< HTTP/1.0 404 Not found
+< HTTP/1.0 200 OK
+< Server: Tiny Web Server
+< Connection: close
+< Content-length: 120
+< Vary: *
+< Cache-Control: no-cache, no-store, must-revalidate
 < Content-type: text/html
-< Content-length: 150
 <
-<html><title>Tiny Error</title><body bgcolor=ffffff>
-404: Not found
-<p>Tiny couldn't find this file: ./home.html
-<hr><em>The Tiny Web server</em>
+<html>
+<head><title>test</title></head>
+<body>
+<img align="middle" src="godzilla.gif">
+Dave O'Hallaron
+</body>
+</html>
 * Closing connection 0
 ```
 
