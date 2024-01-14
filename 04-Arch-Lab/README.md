@@ -486,7 +486,7 @@ jm rB, V：跳转到 M [rB+V] 的地址
 
 以下是 PartB 的完整答案：
 
-```c
+```hcl
 #  Stages for iaddq V, rB: add constant V to rB
 #
 # * Fetch
@@ -865,23 +865,35 @@ Score 0.0/60.0
 
 好的，我们遇到了两个关键词：循环展开、戳气泡。这是什么意思呢？
 
-首先介绍循环展开。这是一种复用循环体的 update-expr 的技术，其思想类似如下代码：
+首先介绍循环展开。有关循环展开的内容在书的第 5.8 章（P366），循环展开是一种复用循环体的 update-expr，同时通过累积变量提高并行度的技术，其思想类似如下代码：
 
 ```python
 # before
+sum = 0
 for(i=0;i<10;i++):
-	print(i)
+	sum += i
 
 # after
+sum1 = 0
+sum2 = 0
 for(i=0;i<10;i+=2):
-	print(i)
-	print(i+1)
+	sum1 += i
+	sum2 += i+1
+sum = sum1 + sum2
 
 ```
 
 其中，每次循环体内的 body-statement 重复执行的次数称为循环展开的路数。在上面的例子中，路数为 2。
 
 可以想到的是，路数越高，循环展开的效率也就越高，但是当路数变高的同时还有一个负面作用，就是当循环次数 n 并不能整除路数 w 的时候，我们总是需要额外处理余数部分。而路数越高，我们在处理余数部分时需要的指令数也就越多，同时我们可能会因为寄存器不足于是需要压栈变量反而造成性能下降。极端状况下 w = +∞，这时候我们的代码就展开了个寂寞。
+
+除了简单的复用 update-expr，循环展开的最大优势在于可以通过累积变量来提高并行度。在上面的例子中，我们可以看到，sum1 和 sum2 是完全独立的，所以我们可以将其放到不同的寄存器中，减少关键路径的长度（即关键路径上的指令数），从而提高效率。
+
+比如，在上面例子的第一种实现内，我们每次循环，不仅需要更新 `i`，还要更新 `sum`，每次循环需要 2 条指令，所有指令都在关键路径上，所以关键路径的总长度为 10\*2 = 20。
+
+而在第二种实现内，我们每两次循环才需要更新 1 次 `i` 不说，每次循环内我们对于 `sum1` 和 `sum2` 的更新可以完全独立开（也就是并行），所以关键路径的总长度为 5\*2 = 10。
+
+当然，这只是简略的估计，有关循环展开的更多内容还是需要参考书本加以理解。
 
 再说第二个关键词：戳气泡。这是一种在流水线中避免控制冒险的技术，其思想是替换原本为了避免各种冒险（即暂停）所加入的气泡周期中为一条并不相关的有效指令，从而避免了气泡带来的等待开销，提高流水线的效率。
 
@@ -1598,10 +1610,13 @@ End:
 
 按照树洞所说，如果你不动 HCL，最优分数应该就是 7.49，任何更低的 CPE 都是因为改了 HCL，我在 Github 和别的地方找到了一些可能有用的链接，在此附上。
 
-[mcginn7 / archlab](https://mcginn7.github.io/2020/02/21/CSAPP-archlab/)：讲的很好，PartC 采用了十路循环展开 + 三叉树分治的方法，经测试，其给出的代码也可以跑出 CPE 7.49 的满分。
+-   [mcginn7 / archlab](https://mcginn7.github.io/2020/02/21/CSAPP-archlab/)：讲的很好，PartC 采用了十路循环展开 + 三叉树分治的方法，经测试，其给出的代码也可以跑出 CPE 7.49 的满分。
+-   [Veiasai / ics-2017-lab6](https://github.com/Veiasai/ics-2017-lab6)：来自 SJTU 大佬的优化提示
+-   [idealism-xxm / reading-notes](https://github.com/idealism-xxm/reading-notes/blob/2976a4609b0e76dc7cc69222cd1b9e9de09d06bb/csapp/archlab.md)：讲的也很好的一篇指南，宣称可以跑到 CPE 7.45 但是未经测试。
+-   [CS-icez / introduction-to-computer-systems](https://github.com/CS-icez/introduction-to-computer-systems/blob/main/Handin/4%20archlab/ncopy.ys)：21 级卷王王中王，极限的 ncopy.ys 和 pipe-full.hcl 优化，达到了 CPE 3.67 的恐怖分数
 
-[Veiasai / ics-2017-lab6](https://github.com/Veiasai/ics-2017-lab6)：来自 SJTU 大佬的优化提示
-
-[ idealism-xxm / reading-notes](https://github.com/idealism-xxm/reading-notes/blob/2976a4609b0e76dc7cc69222cd1b9e9de09d06bb/csapp/archlab.md)：讲的也很好的一篇指南，宣称可以跑到 CPE 7.45 但是未经测试。
-
-[ CS-icez / introduction-to-computer-systems ](https://github.com/CS-icez/introduction-to-computer-systems/blob/main/Handin/4%20archlab/ncopy.ys)：21 级卷王王中王，极限的 ncopy.ys 和 pipe-full.hcl 优化，达到了 CPE 3.67 的恐怖分数
+> \#3453283
+>
+> \#15003353 1 年前 2022-04-20 12:57
+>
+> [洞主] 对了，歪个楼，archlab 的那个操作其实很简单。在第三个 lab 判定数组里面数字与 0 的关系时，在实现成二叉树的结构之后，只需要利用异或操作，两个两个地对数组里面的数字进行计数，就可以在这两个数字符号相反的时候节省一次额外判定的时间，从而很轻松地拿到满分。如果学过数字逻辑的同学应该能意识到这个就是半加器的原理。
