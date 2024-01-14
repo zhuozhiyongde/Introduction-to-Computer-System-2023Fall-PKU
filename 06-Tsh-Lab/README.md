@@ -15,6 +15,8 @@
 
 然而不幸的是，我就踩了这个坑，按照 writeup 的顺序，首先实现了 eval，再实现了 handler，所以本文的阐述顺序也是按照这个顺序的。
 
+做本 lab 前，我推荐大家先阅读：CSAPP 8.4.6。
+
 ## 写在前面的小技巧
 
 ### VS Code 报错：未定义标识符 "sigset_t"
@@ -408,6 +410,8 @@ void eval_none(struct cmdline_tokens tok, int bg, char* cmdline) {
 
 所以正确的做法是，我们需要在父进程中，使用 `sigsuspend` 函数来挂起父进程，直到子进程结束。
 
+有关此处更进一步的讨论，可以参照 CSAPP 8.5.7 的内容。
+
 同时，我们不能使用 if 进行判断，而是要使用 while 循环，因为如果使用 if 的话，可能会因为被挂起，而导致 sigsuspend 跳出。所以必须使用 while 一直判断子进程是否为前台进程。
 
 ```c
@@ -530,7 +534,7 @@ void eval_bg(struct cmdline_tokens tok) {
 
 注意我们之前说过，我们的 tsh 只支持单进程命令。所以不存在一个 job 有多个进程的情况，所以我们可以直接通过 `job->pid` 来找到进程。
 
-另外，我们的编程语言是 C，所以我们不能使用 C++ 的 `struct.data` 这样的语法，而是要使用 `->` 来访问结构体的成员。
+由于我们的 `job` 是一个指向 `job_t` 的指针，所以我们需要使用 `->` 来访问其成员，而不能使用 `.`。
 
 ### 转为前台运行 FG
 
@@ -800,6 +804,8 @@ void sigchld_handler(int sig) {
 这部分主要是要注意，在 handler 内我们必须使用异步信号安全的函数，所以我们不能使用 `printf`，而是要使用 `sio_put`。
 
 同时，按照书上所讲，如果我们在 handler 内部修改了全局数据结构，那么我们必须需要在修改前后，使用 `sigprocmask` 来阻塞所有信号，以保证数据结构的完整性。
+
+关于为何要恢复 `errno`，请参照书上 8.3 章（P512）。
 
 ### sigint_handler
 
