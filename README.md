@@ -1,10 +1,9 @@
 # Introduction-To-Computer-System-2023Fall-PKU
 
-更适合北大宝宝体质的 ICS Lab 辅助学习资料
+更适合北大宝宝体质的 ICS 辅助学习资料
 
--   含各种魔改的附加 Phase
--   含详细解释步骤，包括各种踩坑
--   DataLab 及 BombLab 的解释资料丢失 ~~（没写）~~
+-   含往年题勘误、期中期末考试复习细节整理
+-   含各种魔改的 Lab，包括详细准备操作、解释步骤，与各种踩坑
 -   奉行能偷懒就偷懒的原则，Bomb Lab 的 secret phase, Proxy Lab 的 HTTPS 部分因为不计入成绩，所以都没有写
 
 我不建议你上来就看我写的 lab 踩坑记，因为这可能对你的思考并无好处。
