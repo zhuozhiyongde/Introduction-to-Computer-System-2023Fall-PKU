@@ -1,0 +1,22 @@
+{
+    "name": "presentation",
+    "private": true,
+    "scripts": {
+        "build": "slidev build",
+        "dev": "slidev",
+        "talk": "slidev --remote=hjGbxpfhBaSkgDTj --port=3333",
+        "export": "slidev export"
+    },
+    "dependencies": {
+        "@slidev/cli": "^0.43.7",
+        "@slidev/theme-apple-basic": "^0.20.0",
+        "@slidev/theme-default": "latest",
+        "@slidev/theme-seriph": "latest"
+    },
+    "slidev": {
+        "colorSchema": "light"
+    },
+    "devDependencies": {
+        "playwright-chromium": "^1.39.0"
+    }
+}
