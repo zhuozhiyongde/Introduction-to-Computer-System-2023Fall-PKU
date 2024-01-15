@@ -35,13 +35,5 @@ command
 j *(explode_bomb + 0x81)
 end
 
-# 为校验函数设置断点
-b phase_defused
-# 为此断点编程
-command
-# 直接跳到返回语句处，跳过校验流程
-jump *(phase_defused + 0x2A)
-end
-
 # 炸弹已经安全化，可以放心地拆弹了，开始运行程序
 r
