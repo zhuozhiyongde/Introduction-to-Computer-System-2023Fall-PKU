@@ -177,11 +177,9 @@ make
 
 $$
 \begin{align*}
-x \text{ XNOR } y &= \sim(x \text{ XOR } y) \\
-&= \sim((x \text{ AND } \sim y) \text{ OR } (\sim x \text{ AND } y)) \\
-&= \sim(\sim(\sim x \text{ OR } \sim y) \text{ OR } \sim(x \text{ OR } y)) \\
-&= \sim(\sim x \text{ OR } \sim y) \text{ AND } \sim(x \text{ OR } y) \\
-&= (\sim(\sim x \text{ OR } \sim y) \text{ OR } \sim(x \text{ OR } y)) \\
+\because x \text { AND } y &= \sim(\sim x \text{ OR } \sim y) \\
+\therefore x \text{ XNOR } y &= \sim(x \text{ XOR } y) \\
+&= (\sim x \text{ AND } \sim y) \text{ OR } (x \text{ AND } y ) \\
 &= \sim(x \text{ OR } y) \text{ OR } \sim(\sim x \text{ OR } \sim y) \\
 \end{align*}
 $$
