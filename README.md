@@ -4,9 +4,17 @@
 
 -   含往年题勘误、期中期末考试复习细节整理
 -   含各种魔改的 Lab，包括详细准备操作、解释步骤，与各种踩坑
--   奉行能偷懒就偷懒的原则，Bomb Lab 的 secret phase, Proxy Lab 的 HTTPS 部分因为不计入成绩，所以都没有写
+-   奉行能偷懒就偷懒的原则，Bomb Lab 的 secret phase，Proxy Lab 的 HTTPS 部分因为不计入成绩，所以都没有写
 
 我不建议你上来就看我写的 lab 踩坑记，因为这可能对你的思考并无好处。
+
+CSAPP GoodNotes 笔记版：https://disk.pku.edu.cn/link/AA46F302BBA11A4E73AAAA4FA1AED1FD98
+
+> 文件名：深入理解计算机系统-笔记版-by Arthals & EmptyBlueBox.goodnotes
+>
+> 有效期限：2027-02-28 14:50
+>
+> 提取码：csapp
 
 我的 GoodNotes 笔记可能带有 GPT 内容，请自行甄别。
 
