@@ -179,154 +179,154 @@ r
 
 炸弹的执行有如下流程：
 
-1. 开始时校验是否被本地化，如果检测到被本地化，则直接退出
+首先，在开始时校验是否被本地化，如果检测到被本地化，则直接退出
 
-    ```c
-    int *fp = initialize_bomb();
+```c
+int *fp = initialize_bomb();
 
-    if (*fp != SECRETTOKEN){
-      printf("Don't try to make the bomb run on your local machine!(*/w＼*)");
-      return 0;
-    }
-    ```
+if (*fp != SECRETTOKEN){
+    printf("Don't try to make the bomb run on your local machine!(*/w＼*)");
+    return 0;
+}
+```
 
-    由于我们没有通过修改二进制码的方式来本地化炸弹，所以我们不需要处理这里，但还是给出一个跳过这个 if 语句的 gdb 调试方法供参考：
+由于我们没有通过修改二进制码的方式来本地化炸弹，所以我们不需要处理这里，但还是给出一个跳过这个 if 语句的 gdb 调试方法供参考：
 
-    ```bash
-    b *(main+0x2e)
-    command
-    j *(main+0xb0)
-    end
-    ```
+```bash
+b *(main+0x2e)
+command
+j *(main+0xb0)
+end
+```
 
-2. 在每个 phase 里检验是否输入了正确的密码，如果输入错误则调用 `explode_bomb` 函数，打印 `BOOM!!!`，并在其中调用 `send_msg` 函数，向服务器发送通知
+然后，在每个 phase 里检验是否输入了正确的密码，如果输入错误则调用 `explode_bomb` 函数，打印 `BOOM!!!`，并在其中调用 `send_msg` 函数，向服务器发送通知
 
-    ```asm
-    000000000000211b <explode_bomb>:
-        211b:	f3 0f 1e fa          	endbr64
-        211f:	50                   	push   %rax
-        2120:	58                   	pop    %rax
-        2121:	48 83 ec 18          	sub    $0x18,%rsp
-        2125:	64 48 8b 04 25 28 00 	mov    %fs:0x28,%rax
-        212c:	00 00
-        212e:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
-        2133:	31 c0                	xor    %eax,%eax
-        2135:	48 8d 3d fa 25 00 00 	lea    0x25fa(%rip),%rdi        # 4736 <array.3497+0x336>
-        213c:	e8 2f f1 ff ff       	call   1270 <puts@plt>
-        2141:	48 8d 3d f7 25 00 00 	lea    0x25f7(%rip),%rdi        # 473f <array.3497+0x33f>
-        2148:	e8 23 f1 ff ff       	call   1270 <puts@plt>
-        214d:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%rsp)
-        2154:	00
-        2155:	48 8d 74 24 04       	lea    0x4(%rsp),%rsi
-        215a:	bf 00 00 00 00       	mov    $0x0,%edi
-        215f:	e8 4d fe ff ff       	call   1fb1 <send_msg>
-        2164:	83 7c 24 04 01       	cmpl   $0x1,0x4(%rsp)
-        2169:	74 20                	je     218b <explode_bomb+0x70>
-        216b:	48 8d 35 6e 23 00 00 	lea    0x236e(%rip),%rsi        # 44e0 <array.3497+0xe0>
-        2172:	bf 01 00 00 00       	mov    $0x1,%edi
-        2177:	b8 00 00 00 00       	mov    $0x0,%eax
-        217c:	e8 df f1 ff ff       	call   1360 <__printf_chk@plt>
-        2181:	bf 08 00 00 00       	mov    $0x8,%edi
-        2186:	e8 05 f2 ff ff       	call   1390 <exit@plt>
-        218b:	48 8d 3d 96 23 00 00 	lea    0x2396(%rip),%rdi        # 4528 <array.3497+0x128>
-        2192:	e8 d9 f0 ff ff       	call   1270 <puts@plt>
-        2197:	bf 08 00 00 00       	mov    $0x8,%edi
-        219c:	e8 ef f1 ff ff       	call   1390 <exit@plt>
-    ```
+```asm
+000000000000211b <explode_bomb>:
+    211b:	f3 0f 1e fa          	endbr64
+    211f:	50                   	push   %rax
+    2120:	58                   	pop    %rax
+    2121:	48 83 ec 18          	sub    $0x18,%rsp
+    2125:	64 48 8b 04 25 28 00 	mov    %fs:0x28,%rax
+    212c:	00 00
+    212e:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+    2133:	31 c0                	xor    %eax,%eax
+    2135:	48 8d 3d fa 25 00 00 	lea    0x25fa(%rip),%rdi        # 4736 <array.3497+0x336>
+    213c:	e8 2f f1 ff ff       	call   1270 <puts@plt>
+    2141:	48 8d 3d f7 25 00 00 	lea    0x25f7(%rip),%rdi        # 473f <array.3497+0x33f>
+    2148:	e8 23 f1 ff ff       	call   1270 <puts@plt>
+    214d:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%rsp)
+    2154:	00
+    2155:	48 8d 74 24 04       	lea    0x4(%rsp),%rsi
+    215a:	bf 00 00 00 00       	mov    $0x0,%edi
+    215f:	e8 4d fe ff ff       	call   1fb1 <send_msg>
+    2164:	83 7c 24 04 01       	cmpl   $0x1,0x4(%rsp)
+    2169:	74 20                	je     218b <explode_bomb+0x70>
+    216b:	48 8d 35 6e 23 00 00 	lea    0x236e(%rip),%rsi        # 44e0 <array.3497+0xe0>
+    2172:	bf 01 00 00 00       	mov    $0x1,%edi
+    2177:	b8 00 00 00 00       	mov    $0x0,%eax
+    217c:	e8 df f1 ff ff       	call   1360 <__printf_chk@plt>
+    2181:	bf 08 00 00 00       	mov    $0x8,%edi
+    2186:	e8 05 f2 ff ff       	call   1390 <exit@plt>
+    218b:	48 8d 3d 96 23 00 00 	lea    0x2396(%rip),%rdi        # 4528 <array.3497+0x128>
+    2192:	e8 d9 f0 ff ff       	call   1270 <puts@plt>
+    2197:	bf 08 00 00 00       	mov    $0x8,%edi
+    219c:	e8 ef f1 ff ff       	call   1390 <exit@plt>
+```
 
-    我们的代码，通过在 `call   1fb1 <send_msg>` 这一句处设置断点，然后直接跳到 `call   1390 <exit@plt>` 这一句处，完整的跳过了 `send_msg` 函数的执行，从而使得服务器无从知道我们的炸弹爆炸了。
+我们的代码，通过在 `call   1fb1 <send_msg>` 这一句处设置断点，然后直接跳到 `call   1390 <exit@plt>` 这一句处，完整的跳过了 `send_msg` 函数的执行，从而使得服务器无从知道我们的炸弹爆炸了。
 
-    这对应我们的 `.gdbinit` 文件中的如下代码：
+这对应我们的 `.gdbinit` 文件中的如下代码：
 
-    ```bash
-    # 为 explode_bomb 中触发 send_msg 函数的地方设置断点
-    b *(explode_bomb + 0x44)
-    # 为此断点编程
-    command
-    # 直接跳到 exit 退出函数处，跳过发送信息流程
-    j *(explode_bomb + 0x81)
-    end
-    ```
+```bash
+# 为 explode_bomb 中触发 send_msg 函数的地方设置断点
+b *(explode_bomb + 0x44)
+# 为此断点编程
+command
+# 直接跳到 exit 退出函数处，跳过发送信息流程
+j *(explode_bomb + 0x81)
+end
+```
 
-    其中两个断点的计算方式为：
+其中两个断点的计算方式为：
 
-    由于 `explode_bomb` 函数的地址为 `0x211b`，而 `call send_msg` 指令的地址为 `0x215f`，所以 `call send_msg` 指令的偏移量为 `0x215f - 0x211b = 0x44`。
+由于 `explode_bomb` 函数的地址为 `0x211b`，而 `call send_msg` 指令的地址为 `0x215f`，所以 `call send_msg` 指令的偏移量为 `0x215f - 0x211b = 0x44`。
 
-    同理，`call exit` 函数的地址为 `0x219c`，所以 `call exit` 函数的偏移量为 `0x219c - 0x211b = 0x81`。
+同理，`call exit` 函数的地址为 `0x219c`，所以 `call exit` 函数的偏移量为 `0x219c - 0x211b = 0x81`。
 
-    或许你会问为什么不直接使用 `b 0x215f` 和 `b 0x219c` 来设置断点？这是因为我们的炸弹每次运行的地址都不一样，所以我们需要使用相对地址来设置断点。而这点你会在后续学习第七章链接的时候有所了解，或者是在做下一个 Attack Lab 的时候就会知道了，这就是地址随机化（Address Space Layout Randomization，ASLR）。
+或许你会问为什么不直接使用 `b 0x215f` 和 `b 0x219c` 来设置断点？这是因为我们的炸弹每次运行的地址都不一样，所以我们需要使用相对地址来设置断点。而这点你会在后续学习第七章链接的时候有所了解，或者是在做下一个 Attack Lab 的时候就会知道了，这就是地址随机化（Address Space Layout Randomization，ASLR）。
 
-3. 在每个 phase 里，如果输入正确，则调用 `phase_defused` 函数，同服务器进行通信，~~（同学学号报一下，给你加创新学分）~~，将你输入的字符串发送到服务器进行远程校验，避免你在本地使用 `gdb` 跳过 `explode_bomb` 函数的执行的情况。
+最后，在每个 phase 里，如果输入正确，则调用 `phase_defused` 函数，同服务器进行通信，~~（同学学号报一下，给你加创新学分）~~，将你输入的字符串发送到服务器进行远程校验，避免你在本地使用 `gdb` 跳过 `explode_bomb` 函数的执行的情况。
 
-    ```asm
-    0000000000002331 <phase_defused>:
-        2331:	f3 0f 1e fa          	endbr64
-        2335:	53                   	push   %rbx
-        2336:	48 89 fb             	mov    %rdi,%rbx
-        2339:	c7 07 00 00 00 00    	movl   $0x0,(%rdi)
-        233f:	48 89 fe             	mov    %rdi,%rsi
-        2342:	bf 01 00 00 00       	mov    $0x1,%edi
-        2347:	e8 65 fc ff ff       	call   1fb1 <send_msg>
-        234c:	83 3b 01             	cmpl   $0x1,(%rbx)
-        234f:	75 0b                	jne    235c <phase_defused+0x2b>
-        2351:	83 3d f4 61 00 00 06 	cmpl   $0x6,0x61f4(%rip)        # 854c <num_input_strings>
-        2358:	74 22                	je     237c <phase_defused+0x4b>
-        235a:	5b                   	pop    %rbx
-        235b:	c3                   	ret
-        235c:	48 8d 35 7d 21 00 00 	lea    0x217d(%rip),%rsi        # 44e0 <array.3497+0xe0>
-        2363:	bf 01 00 00 00       	mov    $0x1,%edi
-        2368:	b8 00 00 00 00       	mov    $0x0,%eax
-        236d:	e8 ee ef ff ff       	call   1360 <__printf_chk@plt>
-        2372:	bf 08 00 00 00       	mov    $0x8,%edi
-        2377:	e8 14 f0 ff ff       	call   1390 <exit@plt>
-        237c:	e8 f7 f2 ff ff       	call   1678 <genshin>
-        2381:	85 c0                	test   %eax,%eax
-        2383:	75 26                	jne    23ab <phase_defused+0x7a>
-        2385:	48 8d 3d 7c 22 00 00 	lea    0x227c(%rip),%rdi        # 4608 <array.3497+0x208>
-        238c:	e8 df ee ff ff       	call   1270 <puts@plt>
-        2391:	48 8d 3d b0 22 00 00 	lea    0x22b0(%rip),%rdi        # 4648 <array.3497+0x248>
-        2398:	e8 d3 ee ff ff       	call   1270 <puts@plt>
-        239d:	48 8d 3d ec 22 00 00 	lea    0x22ec(%rip),%rdi        # 4690 <array.3497+0x290>
-        23a4:	e8 c7 ee ff ff       	call   1270 <puts@plt>
-        23a9:	eb af                	jmp    235a <phase_defused+0x29>
-        23ab:	e8 55 f3 ff ff       	call   1705 <qidong>
-        23b0:	85 c0                	test   %eax,%eax
-        23b2:	74 24                	je     23d8 <phase_defused+0xa7>
-        23b4:	48 8d 3d 95 21 00 00 	lea    0x2195(%rip),%rdi        # 4550 <array.3497+0x150>
-        23bb:	e8 b0 ee ff ff       	call   1270 <puts@plt>
-        23c0:	48 8d 3d b1 21 00 00 	lea    0x21b1(%rip),%rdi        # 4578 <array.3497+0x178>
-        23c7:	e8 a4 ee ff ff       	call   1270 <puts@plt>
-        23cc:	b8 00 00 00 00       	mov    $0x0,%eax
-        23d1:	e8 90 f8 ff ff       	call   1c66 <secret_phase>
-        23d6:	eb ad                	jmp    2385 <phase_defused+0x54>
-        23d8:	48 8d 3d d9 21 00 00 	lea    0x21d9(%rip),%rdi        # 45b8 <array.3497+0x1b8>
-        23df:	e8 8c ee ff ff       	call   1270 <puts@plt>
-        23e4:	eb 9f                	jmp    2385 <phase_defused+0x54>
-    ```
+```asm
+0000000000002331 <phase_defused>:
+    2331:	f3 0f 1e fa          	endbr64
+    2335:	53                   	push   %rbx
+    2336:	48 89 fb             	mov    %rdi,%rbx
+    2339:	c7 07 00 00 00 00    	movl   $0x0,(%rdi)
+    233f:	48 89 fe             	mov    %rdi,%rsi
+    2342:	bf 01 00 00 00       	mov    $0x1,%edi
+    2347:	e8 65 fc ff ff       	call   1fb1 <send_msg>
+    234c:	83 3b 01             	cmpl   $0x1,(%rbx)
+    234f:	75 0b                	jne    235c <phase_defused+0x2b>
+    2351:	83 3d f4 61 00 00 06 	cmpl   $0x6,0x61f4(%rip)        # 854c <num_input_strings>
+    2358:	74 22                	je     237c <phase_defused+0x4b>
+    235a:	5b                   	pop    %rbx
+    235b:	c3                   	ret
+    235c:	48 8d 35 7d 21 00 00 	lea    0x217d(%rip),%rsi        # 44e0 <array.3497+0xe0>
+    2363:	bf 01 00 00 00       	mov    $0x1,%edi
+    2368:	b8 00 00 00 00       	mov    $0x0,%eax
+    236d:	e8 ee ef ff ff       	call   1360 <__printf_chk@plt>
+    2372:	bf 08 00 00 00       	mov    $0x8,%edi
+    2377:	e8 14 f0 ff ff       	call   1390 <exit@plt>
+    237c:	e8 f7 f2 ff ff       	call   1678 <genshin>
+    2381:	85 c0                	test   %eax,%eax
+    2383:	75 26                	jne    23ab <phase_defused+0x7a>
+    2385:	48 8d 3d 7c 22 00 00 	lea    0x227c(%rip),%rdi        # 4608 <array.3497+0x208>
+    238c:	e8 df ee ff ff       	call   1270 <puts@plt>
+    2391:	48 8d 3d b0 22 00 00 	lea    0x22b0(%rip),%rdi        # 4648 <array.3497+0x248>
+    2398:	e8 d3 ee ff ff       	call   1270 <puts@plt>
+    239d:	48 8d 3d ec 22 00 00 	lea    0x22ec(%rip),%rdi        # 4690 <array.3497+0x290>
+    23a4:	e8 c7 ee ff ff       	call   1270 <puts@plt>
+    23a9:	eb af                	jmp    235a <phase_defused+0x29>
+    23ab:	e8 55 f3 ff ff       	call   1705 <qidong>
+    23b0:	85 c0                	test   %eax,%eax
+    23b2:	74 24                	je     23d8 <phase_defused+0xa7>
+    23b4:	48 8d 3d 95 21 00 00 	lea    0x2195(%rip),%rdi        # 4550 <array.3497+0x150>
+    23bb:	e8 b0 ee ff ff       	call   1270 <puts@plt>
+    23c0:	48 8d 3d b1 21 00 00 	lea    0x21b1(%rip),%rdi        # 4578 <array.3497+0x178>
+    23c7:	e8 a4 ee ff ff       	call   1270 <puts@plt>
+    23cc:	b8 00 00 00 00       	mov    $0x0,%eax
+    23d1:	e8 90 f8 ff ff       	call   1c66 <secret_phase>
+    23d6:	eb ad                	jmp    2385 <phase_defused+0x54>
+    23d8:	48 8d 3d d9 21 00 00 	lea    0x21d9(%rip),%rdi        # 45b8 <array.3497+0x1b8>
+    23df:	e8 8c ee ff ff       	call   1270 <puts@plt>
+    23e4:	eb 9f                	jmp    2385 <phase_defused+0x54>
+```
 
-    类似于上面的修改，我们的代码通过在进入 `phase_defused` 函数的第一句话处设置断点，然后直接跳到 `ret` 这一句处，避免了同服务器的通信：
+类似于上面的修改，我们的代码通过在进入 `phase_defused` 函数的第一句话处设置断点，然后直接跳到 `ret` 这一句处，避免了同服务器的通信：
 
-    ```bash
-    # 为校验函数设置断点
-    b phase_defused
-    # 为此断点编程
-    command
-    # 直接跳到返回语句处，跳过校验流程
-    jump *(phase_defused + 0x2A)
-    end
-    ```
+```bash
+# 为校验函数设置断点
+b phase_defused
+# 为此断点编程
+command
+# 直接跳到返回语句处，跳过校验流程
+jump *(phase_defused + 0x2A)
+end
+```
 
-    其中，断点的计算方式为：
+其中，断点的计算方式为：
 
-    由于 `phase_defused` 函数的地址为 `0x2331`，而 `ret` 指令的地址为 `0x235b`，所以 `ret` 指令的偏移量为 `0x235b - 0x2331 = 0x2A`。
+由于 `phase_defused` 函数的地址为 `0x2331`，而 `ret` 指令的地址为 `0x235b`，所以 `ret` 指令的偏移量为 `0x235b - 0x2331 = 0x2A`。
 
-    这里的跳转其实似乎并不是必要的，我在这里必须使用这段跳转的原因是我是在 DDL 已经过了情况下重新做这个 lab 写教程的，此时测评服务器已经拒绝接收 Bomb lab 的任何请求，所以如果不加这段会报 HTTP 错误，进而导致整个程序退出。
+这里的跳转其实似乎并不是必要的，我在这里必须使用这段跳转的原因是我是在 DDL 已经过了情况下重新做这个 lab 写教程的，此时测评服务器已经拒绝接收 Bomb lab 的任何请求，所以如果不加这段会报 HTTP 错误，进而导致整个程序退出。
 
-    而如果你是在 DDL 之前做这个 lab，那么你完全不需要这段代码，因为将你的输入发送到服务器进行远程校验正是你所需要的。
+而如果你是在 DDL 之前做这个 lab，那么你完全不需要这段代码，因为将你的输入发送到服务器进行远程校验正是你所需要的。
 
-    当然，如果你不放心，你也可以将之加入到你的 `.gdbinit` 中，只不过你会缺少成功拆弹的提示，只能凭借运行逻辑来判断是否成功拆弹罢了。
-    
-    注：尽管 `phase_defused` 函数内有调用 `send_msg` 函数，但是我们并没有修改 `send_msg` 函数的执行，而是在炸弹爆炸（即触发 `explode_bomb`）了的时候，跳过了 `send_msg` 函数的执行，所以这里的 `send_msg` 函数仍然会被正常执行，不用担心。反之，在炸弹爆炸的情况下，其会跳转并调用 `exit` 函数，所以也不会运行到 `phase_defused` 函数处。
+当然，如果你不放心，你也可以将之加入到你的 `.gdbinit` 中，只不过你会缺少成功拆弹的提示，只能凭借运行逻辑来判断是否成功拆弹罢了。
+
+注：尽管 `phase_defused` 函数内有调用 `send_msg` 函数，但是我们并没有修改 `send_msg` 函数的执行，而是在炸弹爆炸（即触发 `explode_bomb`）了的时候，跳过了 `send_msg` 函数的执行，所以这里的 `send_msg` 函数仍然会被正常执行，不用担心。反之，在炸弹爆炸的情况下，其会跳转并调用 `exit` 函数，所以也不会运行到 `phase_defused` 函数处。
 
 启动拆弹：
 
