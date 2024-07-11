@@ -49,6 +49,19 @@ Host ICS
 
 源码可在 `回课` 文件夹中找到。
 
+## 笔记
+
+我的笔记既可以在各个 Lab 文件夹的 README 中获得，亦可以在我的博客直接阅览：
+
+-   [Data Lab](https://arthals.ink/posts/experience/data-lab)
+-   [Bomb Lab](https://arthals.ink/posts/experience/bomb-lab)
+-   [Attack Lab](https://arthals.ink/posts/experience/attack-lab)
+-   [Arch Lab](https://arthals.ink/posts/experience/arch-lab)
+-   [Cache Lab](https://arthals.ink/posts/experience/cache-lab)
+-   [Tsh Lab](https://arthals.ink/posts/experience/tsh-lab)
+-   [Malloc Lab](https://arthals.ink/posts/experience/malloc-lab)
+-   [Proxy Lab](https://arthals.ink/posts/experience/proxy-lab)
+
 ## 经验
 
 Q：如何正确的读书？
@@ -57,7 +70,7 @@ Q：如何正确的读书？
 
 Q：Class Machine 能不能用？
 
-> A：能用，但是我认为唯一必须要用 Class Machine 的 lab 就是 Bomb Lab（甚至你熟悉了怎么安全化炸弹之后连 Bomb lab 都不需要）。其他的 lab 推荐自己购置一台云服务器（如腾讯轻量云、阿里云 ECS 等），因为 Class Machine 是不连接外网的，所以装环境 / 下载文件都很麻烦。而且自己购置的云服务器可以用来做其他事情，比如搭建个人博客等，这些折腾都会成为你宝贵的经验。
+> A：能用，但是我认为唯一必须要用 Class Machine 的 lab 就是 Attack Lab（因为 Attack Lab 需要考虑 ASLR 等问题，最好使用助教配置好的 Autolab）。其他的 lab 推荐自己购置一台云服务器（如腾讯轻量云、阿里云 ECS 等），因为 Class Machine 是不连接外网的，所以装环境 / 下载文件都很麻烦，而且即便是 Bomb lab，如果你熟悉了怎么安全化炸弹之后也都不需要 Classs Machine。而且自己购置的云服务器可以用来做其他事情，比如搭建个人博客等，这些折腾都会成为你宝贵的经验。
 
 Q：刷往年题一套刷了好几个小时正常吗？
 
