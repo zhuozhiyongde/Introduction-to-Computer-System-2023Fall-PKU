@@ -8,15 +8,16 @@
 
 我不建议你上来就看我写的 lab 踩坑记，因为这可能对你的思考并无好处。
 
-CSAPP GoodNotes 笔记版：https://disk.pku.edu.cn/link/AA46F302BBA11A4E73AAAA4FA1AED1FD98
+CSAPP 笔记：
 
-> 文件名：深入理解计算机系统-笔记版-by Arthals & EmptyBlueBox.goodnotes
->
-> 有效期限：2027-02-28 14:50
->
-> 提取码：csapp
+深入理解计算机系统-笔记版-by Arthals & EmptyBlueBox
 
-我的 GoodNotes 笔记可能带有 GPT 内容，请自行甄别。
+-   GoodNotes 格式：https://disk.pku.edu.cn/link/AA46F302BBA11A4E73AAAA4FA1AED1FD98
+-   PDF 格式：https://disk.pku.edu.cn/link/AA834F941EFC62489DA7DBEEA2659CDCD5
+
+提取码：csapp
+
+我的笔记可能带有 GPT 内容，请自行甄别。
 
 ## 工具
 
