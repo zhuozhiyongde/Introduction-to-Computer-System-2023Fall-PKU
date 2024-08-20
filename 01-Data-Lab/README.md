@@ -297,7 +297,7 @@ int logicalShift(int x, int n) {
 -   最大操作次数：16
 -   评分：4
 
-最容易想到的方法就是，通过将 `x` 分别左移、右移 1 位，获得两个 `mask`，再以这两个 `mask` 取或构造出一个新的、标志了连续 1 的 `consecutive1_mask`，对之取反，即得需要保留的位。最后将 `x` 与 `~consecutive1_mask` 进行 `|` 运算，即可实现清除连续 1 的目的。
+最容易想到的方法就是，通过将 `x` 分别左移、右移 1 位，获得两个 `mask`，再以这两个 `mask` 取或构造出一个新的、标志了连续 1 的 `consecutive1_mask`，对之取反，即得需要保留的位。最后将 `x` 与 `~consecutive1_mask` 进行 `&` 运算，即可实现清除连续 1 的目的。
 
 ```c
 int cleanConsecutive1(int x) {
