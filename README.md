@@ -70,7 +70,7 @@ Q：如何正确的读书？
 
 Q：Class Machine 能不能用？
 
-> A：能用，但是我认为唯一必须要用 Class Machine 的 lab 就是 Attack Lab（因为 Attack Lab 需要考虑 ASLR 等问题，最好使用助教配置好的 Autolab）。其他的 lab 推荐自己购置一台云服务器（如腾讯轻量云、阿里云 ECS 等），因为 Class Machine 是不连接外网的，所以装环境 / 下载文件都很麻烦，而且即便是 Bomb lab，如果你熟悉了怎么安全化炸弹之后也都不需要 Classs Machine。而且自己购置的云服务器可以用来做其他事情，比如搭建个人博客等，这些折腾都会成为你宝贵的经验。
+> A：能用，但是我认为唯一必须要用 Class Machine 的 lab 就是 Attack Lab（因为 Attack Lab 需要考虑 ASLR 等问题，最好使用助教配置好的 Autolab）。其他的 lab 推荐自己购置一台云服务器（如腾讯轻量云、阿里云 ECS 等），因为 Class Machine 是不连接外网的，所以装环境 / 下载文件都很麻烦，而且即便是 Bomb lab，如果你熟悉了怎么安全化炸弹之后也都不需要 Classs Machine（不过可能当你做完之后提交时会需要一下）。而且自己购置的云服务器可以用来做其他事情，比如搭建个人博客等，这些折腾都会成为你宝贵的经验。
 
 Q：刷往年题一套刷了好几个小时正常吗？
 
