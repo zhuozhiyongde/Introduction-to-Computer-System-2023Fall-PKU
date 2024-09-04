@@ -53,14 +53,14 @@ Host ICS
 
 我的笔记既可以在各个 Lab 文件夹的 README 中获得，亦可以在我的博客直接阅览：
 
--   [Data Lab](https://arthals.ink/posts/experience/data-lab)
--   [Bomb Lab](https://arthals.ink/posts/experience/bomb-lab)
--   [Attack Lab](https://arthals.ink/posts/experience/attack-lab)
--   [Arch Lab](https://arthals.ink/posts/experience/arch-lab)
--   [Cache Lab](https://arthals.ink/posts/experience/cache-lab)
--   [Tsh Lab](https://arthals.ink/posts/experience/tsh-lab)
--   [Malloc Lab](https://arthals.ink/posts/experience/malloc-lab)
--   [Proxy Lab](https://arthals.ink/posts/experience/proxy-lab)
+-   [Data Lab](https://arthals.ink/blog/data-lab)
+-   [Bomb Lab](https://arthals.ink/blog/bomb-lab)
+-   [Attack Lab](https://arthals.ink/blog/attack-lab)
+-   [Arch Lab](https://arthals.ink/blog/arch-lab)
+-   [Cache Lab](https://arthals.ink/blog/cache-lab)
+-   [Tsh Lab](https://arthals.ink/blog/tsh-lab)
+-   [Malloc Lab](https://arthals.ink/blog/malloc-lab)
+-   [Proxy Lab](https://arthals.ink/blog/proxy-lab)
 
 ## 经验
 
