@@ -24,19 +24,15 @@ CSAPP 笔记：
 -   `tldr`：比 `man` 更好用的命令行工具，可以用来查看命令的用例，快速上手命令
 -   `VS Code Remote - SSH`：VS Code 的远程开发插件，可以用来远程开发。对于使用云服务器 / Class Machine 的同学尤为推荐
 
-注：如果你使用 [PKU VPN 2 - 真正实现 PKU VPN 和 Clash 兼容使用](https://arthals.ink/posts/tools/pku-vpn-perfect) 中提到的 Docker 方式链接 PKU VPN，那么你需要修改 `ssh` 的配置如下：
+注：如果你使用 [PKU VPN 3 - 用校内服务器实现 PKU 内网和 Clash/Surge 兼容使用](https://arthals.ink/blog/pku-vpn-internal-server) 中提到的方式链接北大内网，那么你需要配置 `~/.ssh/config` 如下：
 
 ```bash
 Host ICS
-    HostName 162.105.31.232
-    # 代理命令，macOS。其他系统请自行搜索
-    ProxyCommand nc -X 5 -x 127.0.0.1:11080 %h %p
-    Port 22106
-    User u2110306206
-    IdentityFile ~/.ssh/id_rsa
-    # 或者使用密码登录
-    # password 123456
+   HostName 100.104.38.30
+   User ubuntu
 ```
+
+其中 HostName 为你的 Tailscale 内网 IP，User 为你的用户名。
 
 ## 回课
 
@@ -49,9 +45,18 @@ Host ICS
 
 源码可在 `回课` 文件夹中找到。
 
+在 2024 年，我成为了 ICS 课程的助教，我的小班回课 PPT 可以在 [Arthals-ICS-Slide](https://slide.huh.moe/) 中找到（需要北大内网）。
+
+目前有：
+
+1. [课程介绍 / Introduction](https://slide.huh.moe/00/)
+2. [数据表示 / Data Representation](https://slide.huh.moe/01/)
+3. [程序的机器表示 I / Machine Programming I](https://slide.huh.moe/02/)
+4. [程序的机器表示 II / Machine Programming II](https://slide.huh.moe/03/)
+
 ## 笔记
 
-我的笔记既可以在各个 Lab 文件夹的 README 中获得，亦可以在我的博客直接阅览：
+建议直接我的博客直接阅览我的笔记，因为我会优先在博客更新勘误。你也可以在各个 Lab 文件夹的 README 中获得，但可能会有所落后。
 
 -   [Data Lab](https://arthals.ink/blog/data-lab)
 -   [Bomb Lab](https://arthals.ink/blog/bomb-lab)
@@ -71,6 +76,8 @@ Q：如何正确的读书？
 Q：Class Machine 能不能用？
 
 > A：能用，但是我认为唯一必须要用 Class Machine 的 lab 就是 Attack Lab（因为 Attack Lab 需要考虑 ASLR 等问题，最好使用助教配置好的 Autolab）。其他的 lab 推荐自己购置一台云服务器（如腾讯轻量云、阿里云 ECS 等），因为 Class Machine 是不连接外网的，所以装环境 / 下载文件都很麻烦，而且即便是 Bomb lab，如果你熟悉了怎么安全化炸弹之后也都不需要 Classs Machine（不过可能当你做完之后提交时会需要一下）。而且自己购置的云服务器可以用来做其他事情，比如搭建个人博客等，这些折腾都会成为你宝贵的经验。
+>
+> Update：自 2024 年以后，北大 ICS 课程已经转为使用 Clab 来完成实验，所以上面的话你可以忽略啦！
 
 Q：刷往年题一套刷了好几个小时正常吗？
 
