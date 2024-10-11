@@ -1583,7 +1583,7 @@ layout regs
 # 在 lea    0x657b(%rip),%rdx 的下一行设置断点，从而获得更新后的 %rdx
 b *(phase_6+142)
 c
-# 十进制打印 %rdx 开始的 32 个数
+# 十进制打印 %rdx 开始的 24 个数
 x/24 $rdx
 ```
 
