@@ -362,7 +362,7 @@ objdump -d rtarget > rtarget.s
 
 1. `0x00403913`：第一个 gadget
 2. `0x11a67610`：Cookie
-3. `0x00401ea8`：touch2 函数起始点
+3. `0x00401ea8`：touch2 函数起始点，**注意可能和之前 ctarget 的 touch2 函数起始点不一样了**
 
 直接构造 `p4.txt`：
 
