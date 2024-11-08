@@ -1,5 +1,9 @@
 # 更适合北大宝宝体质的 Arch Lab 踩坑记
 
+> [!CAUTION]
+>
+> **致各位同学：本笔记的撰写目的是用作参考，请勿直接抄袭，否则后果自负。**
+
 ## PartA
 
 本节所需程序在 `sim/misc` 下，要做的事情是编写 `.ys` 的汇编代码，然后执行：
@@ -619,82 +623,82 @@ boolsig dmem_error 'dmem_error'		# Error signal from data memory
 
 # Determine instruction code
 word icode = [
-	imem_error: INOP;
-	1: imem_icode;		# Default: get from instruction memory
+    imem_error: INOP;
+    1: imem_icode;		# Default: get from instruction memory
 ];
 
 # Determine instruction function
 word ifun = [
-	imem_error: FNONE;
-	1: imem_ifun;		# Default: get from instruction memory
+    imem_error: FNONE;
+    1: imem_ifun;		# Default: get from instruction memory
 ];
 
 bool instr_valid = icode in
-	{ INOP, IHALT, IRRMOVQ, IIRMOVQ, IRMMOVQ, IMRMOVQ,
-	       IOPQ, IJXX, ICALL, IRET, IPUSHQ, IPOPQ, IIADDQ, IJM };
+    { INOP, IHALT, IRRMOVQ, IIRMOVQ, IRMMOVQ, IMRMOVQ,
+           IOPQ, IJXX, ICALL, IRET, IPUSHQ, IPOPQ, IIADDQ, IJM };
 
 # Does fetched instruction require a regid byte?
 bool need_regids =
-	icode in { IRRMOVQ, IOPQ, IPUSHQ, IPOPQ,
-		     IIRMOVQ, IRMMOVQ, IMRMOVQ, IIADDQ, IJM };
+    icode in { IRRMOVQ, IOPQ, IPUSHQ, IPOPQ,
+             IIRMOVQ, IRMMOVQ, IMRMOVQ, IIADDQ, IJM };
 
 # Does fetched instruction require a constant word?
 bool need_valC =
-	icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ, IJXX, ICALL, IIADDQ, IJM };
+    icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ, IJXX, ICALL, IIADDQ, IJM };
 
 ################ Decode Stage    ###################################
 
 ## What register should be used as the A source?
 word srcA = [
-	icode in { IRRMOVQ, IRMMOVQ, IOPQ, IPUSHQ  } : rA;
-	icode in { IPOPQ, IRET } : RRSP;
-	1 : RNONE; # Don't need register
+    icode in { IRRMOVQ, IRMMOVQ, IOPQ, IPUSHQ  } : rA;
+    icode in { IPOPQ, IRET } : RRSP;
+    1 : RNONE; # Don't need register
 ];
 
 ## What register should be used as the B source?
 word srcB = [
-	icode in { IOPQ, IRMMOVQ, IMRMOVQ, IIADDQ, IJM  } : rB;
-	icode in { IPUSHQ, IPOPQ, ICALL, IRET } : RRSP;
-	1 : RNONE;  # Don't need register
+    icode in { IOPQ, IRMMOVQ, IMRMOVQ, IIADDQ, IJM  } : rB;
+    icode in { IPUSHQ, IPOPQ, ICALL, IRET } : RRSP;
+    1 : RNONE;  # Don't need register
 ];
 
 ## What register should be used as the E destination?
 word dstE = [
-	icode in { IRRMOVQ } && Cnd : rB;
-	icode in { IIRMOVQ, IOPQ, IIADDQ} : rB;
-	icode in { IPUSHQ, IPOPQ, ICALL, IRET } : RRSP;
-	1 : RNONE;  # Don't write any register
+    icode in { IRRMOVQ } && Cnd : rB;
+    icode in { IIRMOVQ, IOPQ, IIADDQ} : rB;
+    icode in { IPUSHQ, IPOPQ, ICALL, IRET } : RRSP;
+    1 : RNONE;  # Don't write any register
 ];
 
 ## What register should be used as the M destination?
 word dstM = [
-	icode in { IMRMOVQ, IPOPQ } : rA;
-	1 : RNONE;  # Don't write any register
+    icode in { IMRMOVQ, IPOPQ } : rA;
+    1 : RNONE;  # Don't write any register
 ];
 
 ################ Execute Stage   ###################################
 
 ## Select input A to ALU
 word aluA = [
-	icode in { IRRMOVQ, IOPQ } : valA;
-	icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ, IIADDQ, IJM } : valC;
-	icode in { ICALL, IPUSHQ } : -8;
-	icode in { IRET, IPOPQ } : 8;
-	# Other instructions don't need ALU
+    icode in { IRRMOVQ, IOPQ } : valA;
+    icode in { IIRMOVQ, IRMMOVQ, IMRMOVQ, IIADDQ, IJM } : valC;
+    icode in { ICALL, IPUSHQ } : -8;
+    icode in { IRET, IPOPQ } : 8;
+    # Other instructions don't need ALU
 ];
 
 ## Select input B to ALU
 word aluB = [
-	icode in { IRMMOVQ, IMRMOVQ, IOPQ, ICALL,
-		      IPUSHQ, IRET, IPOPQ, IIADDQ, IJM } : valB;
-	icode in { IRRMOVQ, IIRMOVQ } : 0;
-	# Other instructions don't need ALU
+    icode in { IRMMOVQ, IMRMOVQ, IOPQ, ICALL,
+              IPUSHQ, IRET, IPOPQ, IIADDQ, IJM } : valB;
+    icode in { IRRMOVQ, IIRMOVQ } : 0;
+    # Other instructions don't need ALU
 ];
 
 ## Set the ALU function
 word alufun = [
-	icode == IOPQ : ifun;
-	1 : ALUADD;
+    icode == IOPQ : ifun;
+    1 : ALUADD;
 ];
 
 ## Should the condition codes be updated?
@@ -710,26 +714,26 @@ bool mem_write = icode in { IRMMOVQ, IPUSHQ, ICALL };
 
 ## Select memory address
 word mem_addr = [
-	icode in { IRMMOVQ, IPUSHQ, ICALL, IMRMOVQ, IJM } : valE;
-	icode in { IPOPQ, IRET } : valA;
-	# Other instructions don't need address
+    icode in { IRMMOVQ, IPUSHQ, ICALL, IMRMOVQ, IJM } : valE;
+    icode in { IPOPQ, IRET } : valA;
+    # Other instructions don't need address
 ];
 
 ## Select memory input data
 word mem_data = [
-	# Value from register
-	icode in { IRMMOVQ, IPUSHQ } : valA;
-	# Return PC
-	icode == ICALL : valP;
-	# Default: Don't write anything
+    # Value from register
+    icode in { IRMMOVQ, IPUSHQ } : valA;
+    # Return PC
+    icode == ICALL : valP;
+    # Default: Don't write anything
 ];
 
 ## Determine instruction status
 word Stat = [
-	imem_error || dmem_error : SADR;
-	!instr_valid: SINS;
-	icode == IHALT : SHLT;
-	1 : SAOK;
+    imem_error || dmem_error : SADR;
+    !instr_valid: SINS;
+    icode == IHALT : SHLT;
+    1 : SAOK;
 ];
 
 ################ Program Counter Update ############################
@@ -737,14 +741,14 @@ word Stat = [
 ## What address should instruction be fetched at
 
 word new_pc = [
-	# Call.  Use instruction constant
-	icode == ICALL : valC;
-	# Taken branch.  Use instruction constant
-	icode == IJXX && Cnd : valC;
-	# Completion of RET instruction.  Use value from stack
-	icode in { IRET, IJM } : valM;
-	# Default: Use incremented PC
-	1 : valP;
+    # Call.  Use instruction constant
+    icode == ICALL : valC;
+    # Taken branch.  Use instruction constant
+    icode == IJXX && Cnd : valC;
+    # Completion of RET instruction.  Use value from stack
+    icode in { IRET, IJM } : valM;
+    # Default: Use incremented PC
+    1 : valP;
 ];
 #/* $end seq-all-hcl */
 
@@ -818,31 +822,31 @@ ncopy:
 
 ##################################################################
 # You can modify this portion
-	# Loop header
-	xorq %rax,%rax		# count = 0;
-	andq %rdx,%rdx		# len <= 0?
-	jle Done		# if so, goto Done:
+    # Loop header
+    xorq %rax,%rax		# count = 0;
+    andq %rdx,%rdx		# len <= 0?
+    jle Done		# if so, goto Done:
 
 Loop:
-	mrmovq (%rdi), %r10	# read val from src...
-	rmmovq %r10, (%rsi)	# ...and store it to dst
-	andq %r10, %r10		# val <= 0?
-	jle Npos		# if so, goto Npos:
-	irmovq $1, %r10
-	addq %r10, %rax		# count++
+    mrmovq (%rdi), %r10	# read val from src...
+    rmmovq %r10, (%rsi)	# ...and store it to dst
+    andq %r10, %r10		# val <= 0?
+    jle Npos		# if so, goto Npos:
+    irmovq $1, %r10
+    addq %r10, %rax		# count++
 Npos:
-	irmovq $1, %r10
-	subq %r10, %rdx		# len--
-	irmovq $8, %r10
-	addq %r10, %rdi		# src++
-	addq %r10, %rsi		# dst++
-	andq %rdx,%rdx		# len > 0?
-	jg Loop			# if so, goto Loop:
+    irmovq $1, %r10
+    subq %r10, %rdx		# len--
+    irmovq $8, %r10
+    addq %r10, %rdi		# src++
+    addq %r10, %rsi		# dst++
+    andq %rdx,%rdx		# len > 0?
+    jg Loop			# if so, goto Loop:
 ##################################################################
 # Do not modify the following section of code
 # Function epilogue.
 Done:
-	ret
+    ret
 
 ```
 
@@ -857,11 +861,11 @@ Score 0.0/60.0
 
 通过观察，我们发现此程序存在如下问题：
 
--   初始化置零了 rax，而这并不是必要的
--   每次循环都要判断 len 是否大于 0、更新起始地址 rdi 和目标地址 rsi，这非常耗时，可以使用循环展开来减少这些开销
--   循环体内，mrmovq 接 rmmovq 丝滑小连招，造成了数据冒险（加载 / 使用冒险），所以每次都需要暂停（即插入一个气泡，下同，可能不加以区分） 1 个气泡周期（分析方法：rmmovq 需要进入 M（4） 写回阶段才能读取出来正确的内存数据，mrmovq 才能进入 D（2） 解码阶段，4-2-1=1，即中间需要插入 1 条指令或者冒泡 1 次），可以使用 “戳气泡” 技术来减少这些开销
--   每次判断当前取出数是否为正数，都是用的是 andq + jle，这会造成控制冒险，每次预测失败都会有 2 个气泡周期的惩罚，我们可以使用类似 “戳气泡” 的办法来避免预测失败，从而减少这些开销
--   Npos 内，屡屡 irmovq 然后 addq，造成的数据冒险虽然可以通过转发来规避，但是我们可以使用 PartB 中实现的 iaddq 来减少一个周期
+-   初始化置零了 `rax`，而这并不是必要的
+-   每次循环都要判断 `len` 是否大于 0、更新起始地址 `rdi` 和目标地址 `rsi`，这非常耗时，可以使用循环展开来减少这些开销
+-   循环体内，`mrmovq` 接 `rmmovq` 丝滑小连招，造成了数据冒险（加载 / 使用冒险），所以每次都需要暂停（即插入一个气泡，下同，可能不加以区分） 1 个气泡周期（分析方法：`rmmovq` 需要进入 M（4） 写回阶段才能读取出来正确的内存数据，`mrmovq` 才能进入 D（2） 解码阶段，$4-2-1=1$，即中间需要插入 1 条指令或者冒泡 1 次），可以使用 “戳气泡” 技术来减少这些开销
+-   每次判断当前取出数是否为正数，都是用的是 `andq + jle`，这会造成控制冒险，每次预测失败都会有 2 个气泡周期的惩罚，我们可以使用类似 “戳气泡” 的办法来避免预测失败，从而减少这些开销
+-   Npos 内，屡屡 `irmovq` 然后 `addq`，造成的数据冒险虽然可以通过转发来规避，但是我们可以使用 PartB 中实现的 `iaddq` 来减少一个周期
 
 好的，我们遇到了两个关键词：循环展开、戳气泡。这是什么意思呢？
 
@@ -871,27 +875,27 @@ Score 0.0/60.0
 # before
 sum = 0
 for(i=0;i<10;i++):
-	sum += i
+    sum += i
 
 # after
 sum1 = 0
 sum2 = 0
 for(i=0;i<10;i+=2):
-	sum1 += i
-	sum2 += i+1
+    sum1 += i
+    sum2 += i+1
 sum = sum1 + sum2
 
 ```
 
 其中，每次循环体内的 body-statement 重复执行的次数称为循环展开的路数。在上面的例子中，路数为 2。
 
-可以想到的是，路数越高，循环展开的效率也就越高，但是当路数变高的同时还有一个负面作用，就是当循环次数 n 并不能整除路数 w 的时候，我们总是需要额外处理余数部分。而路数越高，我们在处理余数部分时需要的指令数也就越多，同时我们可能会因为寄存器不足于是需要压栈变量反而造成性能下降。极端状况下 w = +∞，这时候我们的代码就展开了个寂寞。
+可以想到的是，路数越高，循环展开的效率也就越高，但是当路数变高的同时还有一个负面作用，就是当循环次数 $n$ 并不能整除路数 $w$ 的时候，我们总是需要额外处理余数部分。而路数越高，我们在处理余数部分时需要的指令数也就越多，同时我们可能会因为寄存器不足于是需要压栈变量反而造成性能下降。极端状况下 $w \to +\infty$，这时候我们的代码就展开了个寂寞。
 
-除了简单的复用 update-expr，循环展开的最大优势在于可以通过累积变量来提高并行度。在上面的例子中，我们可以看到，sum1 和 sum2 是完全独立的，所以我们可以将其放到不同的寄存器中，减少关键路径的长度（即关键路径上的指令数），从而提高效率。
+除了简单的复用 update-expr，循环展开的最大优势在于可以通过累积变量来提高并行度。在上面的例子中，我们可以看到，`sum1` 和 `sum2` 是完全独立的，所以我们可以将其放到不同的寄存器中，减少关键路径的长度（即关键路径上的指令数），从而提高效率。
 
-比如，在上面例子的第一种实现内，我们每次循环，不仅需要更新 `i`，还要更新 `sum`，每次循环需要 2 条指令，所有指令都在关键路径上，所以关键路径的总长度为 10\*2 = 20。
+比如，在上面例子的第一种实现内，我们每次循环，不仅需要更新 `i`，还要更新 `sum`，每次循环需要 2 条指令，所有指令都在关键路径上，所以关键路径的总长度为 $10 \times 2 = 20$。
 
-而在第二种实现内，我们每两次循环才需要更新 1 次 `i` 不说，每次循环内我们对于 `sum1` 和 `sum2` 的更新可以完全独立开（也就是并行），所以关键路径的总长度为 5\*2 = 10。
+而在第二种实现内，我们每两次循环才需要更新 1 次 `i` 不说，每次循环内我们对于 `sum1` 和 `sum2` 的更新可以完全独立开（也就是并行），所以关键路径的总长度为 $5 \times 2 = 10$。
 
 当然，这只是简略的估计，有关循环展开的更多内容还是需要参考书本加以理解。
 
@@ -907,56 +911,56 @@ sum = sum1 + sum2
 
 ```asm
 ncopy:
-	# 8路循环展开，优点是余数处理的时候可以平衡地使用二叉树搜索，从而只需要3次平均判断次数
-	iaddq $-8, %rdx
-	jl handle_remainder
-	# 进行8路循环展开，一次性将8个数读入到寄存器中，使用不同的寄存器保证流水线满速运行
-	# 由于使用了不同的寄存器，所以不存在任何的数据冒险，也就不需要暂停，从而可以优化 CPE
+    # 8路循环展开，优点是余数处理的时候可以平衡地使用二叉树搜索，从而只需要3次平均判断次数
+    iaddq $-8, %rdx
+    jl handle_remainder
+    # 进行8路循环展开，一次性将8个数读入到寄存器中，使用不同的寄存器保证流水线满速运行
+    # 由于使用了不同的寄存器，所以不存在任何的数据冒险，也就不需要暂停，从而可以优化 CPE
 loop_unrolling_8_way:
-	mrmovq (%rdi), %r8
-	mrmovq 8(%rdi), %r9
-	mrmovq 16(%rdi), %r10
-	mrmovq 24(%rdi), %r11
-	mrmovq 32(%rdi), %r12
-	mrmovq 40(%rdi), %r13
-	mrmovq 48(%rdi), %r14
-	mrmovq 56(%rdi), %rcx
+    mrmovq (%rdi), %r8
+    mrmovq 8(%rdi), %r9
+    mrmovq 16(%rdi), %r10
+    mrmovq 24(%rdi), %r11
+    mrmovq 32(%rdi), %r12
+    mrmovq 40(%rdi), %r13
+    mrmovq 48(%rdi), %r14
+    mrmovq 56(%rdi), %rcx
 
-	# 判断这8个读入的数据是否大于0，大于0则将其写入到dst中，同时计数器加1
+    # 判断这8个读入的数据是否大于0，大于0则将其写入到dst中，同时计数器加1
 judge_and_write_num_0:
-	# 判断第一个数是否大于0
-	andq %r8, %r8
-	rmmovq %r8, (%rsi)
-	jle judge_and_write_num_1
-	iaddq $1, %rax
+    # 判断第一个数是否大于0
+    andq %r8, %r8
+    rmmovq %r8, (%rsi)
+    jle judge_and_write_num_1
+    iaddq $1, %rax
 ...
 judge_and_write_num_7:
-	andq %rcx, %rcx
-	rmmovq %rcx, 56(%rsi)
-	jle update_expr
-	iaddq $1, %rax
+    andq %rcx, %rcx
+    rmmovq %rcx, 56(%rsi)
+    jle update_expr
+    iaddq $1, %rax
 update_expr:
-	# 更新循环参数
-	# rdi, rsi 都可以改，因为本次循环中的数据已经被写入到了 dst 中，且完成了正数判断
-	# 所以不会再次使用，只需待循环结束时再去处理余数
-	iaddq $64, %rdi
-	iaddq $64, %rsi
-	iaddq $-8, %rdx
-	# 循环结束条件判断
-	# 注意此时无法使用之前类似的控制冒险优化技术，因为必须知道 rdx 的新值才能确定是否要继续拷贝
-	# 而插入 nop 指令无益于降低 CPE，因为预测失败的情况只有最后才会出现，并导致 2 个气泡周期的惩罚
-	# 但是如果使用 nop 指令，每次循环都会多出 1 个时钟周期
-	jge loop_unrolling_8_way
+    # 更新循环参数
+    # rdi, rsi 都可以改，因为本次循环中的数据已经被写入到了 dst 中，且完成了正数判断
+    # 所以不会再次使用，只需待循环结束时再去处理余数
+    iaddq $64, %rdi
+    iaddq $64, %rsi
+    iaddq $-8, %rdx
+    # 循环结束条件判断
+    # 注意此时无法使用之前类似的控制冒险优化技术，因为必须知道 rdx 的新值才能确定是否要继续拷贝
+    # 而插入 nop 指令无益于降低 CPE，因为预测失败的情况只有最后才会出现，并导致 2 个气泡周期的惩罚
+    # 但是如果使用 nop 指令，每次循环都会多出 1 个时钟周期
+    jge loop_unrolling_8_way
 
 ```
 
 仔细观察代码中 `judge_and_write_num_x` 中的语序，我们将原本位于后面的 `rmmovq` 指令插入到了 `andq` 设置条件码语句与 `jle` 判断语句之间，从而使得 `jle` 到达 Decode 解码阶段时，各指令阶段如下：
 
--   `andq` Memory 访存阶段
--   `rmovq` Execute 执行阶段
--   `jle` Decode 解码阶段
+-   `andq`：Memory 访存阶段
+-   `rmovq`：Execute 执行阶段
+-   `jle`：Decode 解码阶段
 
-此时，`jle` 可以立即使用正确的 M_Cnd，避免控制冒险，即在 Decode 解码阶段就可以知道是否需要跳转，避免了预测失败时的 2 个气泡周期的惩罚。
+此时，`jle` 可以立即使用正确的 `M_Cnd`，避免控制冒险，即在 Decode 解码阶段就可以知道是否需要跳转，避免了预测失败时的 2 个气泡周期的惩罚。
 
 其他细节请参见代码注释。
 
@@ -970,103 +974,103 @@ update_expr:
 
 ```asm
 choose_where_to_jmp:
-	if(cnd_for_x):
-		jmp handle_reminder_x
-	...
+    if(cnd_for_x):
+        jmp handle_reminder_x
+    ...
 handle_remainder_7:
-	...
+    ...
 handle_remainder_6:
-	...
-	...
+    ...
+    ...
 handle_remainder_0:
 ```
 
-这种处理结构的好处在于，对于任意余数 r，我们总能先分支跳转到对应的余数处理代码，然后顺序执行从 r ~ 0 之间的所有判断，从而无需多次跳转。
+这种处理结构的好处在于，对于任意余数 $r$，我们总能先分支跳转到对应的余数处理代码，然后顺序执行从 $r \sim 0$ 之间的所有判断，从而无需多次跳转。
 
 那么问题来了，我们如何才能选择应当跳转到那个分支呢？最朴素的思想莫过于一个一个加过去：
 
 ```asm
 handle_remainder:
-	# 余数处理，朴素形态，起始 rdx 值为 -8 ~ -1
-	iaddq $1, %rdx
-	mrmovq 48(%rdi), %rbx
-	je handle_remainder_7
-	iaddq $1, %rdx
-	mrmovq 40(%rdi), %rbx
-	je handle_remainder_6
-	iaddq $1, %rdx
-	mrmovq 32(%rdi), %rbx
-	je handle_remainder_5
-	iaddq $1, %rdx
-	mrmovq 24(%rdi), %rbx
-	je handle_remainder_4
-	iaddq $1, %rdx
-	mrmovq 16(%rdi), %rbx
-	je handle_remainder_3
-	iaddq $1, %rdx
-	mrmovq 8(%rdi), %rbx
-	je handle_remainder_2
-	iaddq $1, %rdx
-	mrmovq (%rdi), %rbx
-	je handle_remainder_1
-	ret
+    # 余数处理，朴素形态，起始 rdx 值为 -8 ~ -1
+    iaddq $1, %rdx
+    mrmovq 48(%rdi), %rbx
+    je handle_remainder_7
+    iaddq $1, %rdx
+    mrmovq 40(%rdi), %rbx
+    je handle_remainder_6
+    iaddq $1, %rdx
+    mrmovq 32(%rdi), %rbx
+    je handle_remainder_5
+    iaddq $1, %rdx
+    mrmovq 24(%rdi), %rbx
+    je handle_remainder_4
+    iaddq $1, %rdx
+    mrmovq 16(%rdi), %rbx
+    je handle_remainder_3
+    iaddq $1, %rdx
+    mrmovq 8(%rdi), %rbx
+    je handle_remainder_2
+    iaddq $1, %rdx
+    mrmovq (%rdi), %rbx
+    je handle_remainder_1
+    ret
 ```
 
-注：这段代码中同样利用到了 “戳气泡” 的技术，即在 `iaddq` 设置条件码与 `je` 跳转语句中插入了一句 `mrmovq` 指令（虽然这更新了 rbx，但并不会设置条件码，所以跳转语句并不关心它），从而避免了预测失败惩罚。
+注：这段代码中同样利用到了 “戳气泡” 的技术，即在 `iaddq` 设置条件码与 `je` 跳转语句中插入了一句 `mrmovq` 指令（虽然这更新了 `rbx`，但并不会设置条件码，所以跳转语句并不关心它），从而避免了预测失败惩罚。
 
 但这无疑是十分低效的，回忆起我们在数算 / 计概中学到的 BST 二叉树搜索，以及先前章节学到过的二分代码的汇编表示，我们可以优化这个顺序判断的结构，使之对于任意余数，都只需要 3 次判断就能准确知道应当跳转到那个分支。同时要记得注意细节，减少不必要的加减操作与跳转操作：
 
 ```asm
 handle_remainder:
-	# 余数处理，采用平衡二叉树搜索的方式，使得平均判断次数为 3 次
-	# -8 ~ -1 -> -4 ~ 3
-	iaddq $4, %rdx
-	# -4 ~ -1
-	jl handle_remainder_0_to_3
+    # 余数处理，采用平衡二叉树搜索的方式，使得平均判断次数为 3 次
+    # -8 ~ -1 -> -4 ~ 3
+    iaddq $4, %rdx
+    # -4 ~ -1
+    jl handle_remainder_0_to_3
 
 handle_remainder_4_to_7:
-	# 0 ~ 3 -> -2 ~ 1
-	iaddq $-2, %rdx
-	# -2 ~ -1
-	jl handle_remainder_4_to_5
+    # 0 ~ 3 -> -2 ~ 1
+    iaddq $-2, %rdx
+    # -2 ~ -1
+    jl handle_remainder_4_to_5
 
 handle_remainder_6_to_7:
-	# 0 ~ 1
-	mrmovq 40(%rdi), %rbx
-	je handle_remainder_6
-	# 由于存在转发优先级，所以最新的指令优先级最高
-	# 所以可以直接覆写 %rbx，无需切换寄存器/等待冒泡
-	mrmovq 48(%rdi), %rbx
-	jmp handle_remainder_7
+    # 0 ~ 1
+    mrmovq 40(%rdi), %rbx
+    je handle_remainder_6
+    # 由于存在转发优先级，所以最新的指令优先级最高
+    # 所以可以直接覆写 %rbx，无需切换寄存器/等待冒泡
+    mrmovq 48(%rdi), %rbx
+    jmp handle_remainder_7
 
 handle_remainder_4_to_5:
-	# -2 ~ -1 -> -1 ~ 0
-	iaddq $1, %rdx
-	mrmovq 32(%rdi), %rbx
-	je handle_remainder_5
-	mrmovq 24(%rdi), %rbx
-	jmp handle_remainder_4
+    # -2 ~ -1 -> -1 ~ 0
+    iaddq $1, %rdx
+    mrmovq 32(%rdi), %rbx
+    je handle_remainder_5
+    mrmovq 24(%rdi), %rbx
+    jmp handle_remainder_4
 
 handle_remainder_0_to_3:
-	# -4 ~ -1 -> -2 ~ 1
-	iaddq $2, %rdx
-	jl handle_remainder_0_to_1
+    # -4 ~ -1 -> -2 ~ 1
+    iaddq $2, %rdx
+    jl handle_remainder_0_to_1
 
 handle_remainder_2_to_3:
-	# 0 ~ 1
-	mrmovq 8(%rdi), %rbx
-	je handle_remainder_2
-	mrmovq 16(%rdi), %rbx
-	jmp handle_remainder_3
+    # 0 ~ 1
+    mrmovq 8(%rdi), %rbx
+    je handle_remainder_2
+    mrmovq 16(%rdi), %rbx
+    jmp handle_remainder_3
 
 handle_remainder_0_to_1:
-	# -2 ~ -1
-	iaddq $1, %rdx
-	mrmovq (%rdi), %rbx
-	je handle_remainder_1
-	# 对于余数为 0 的情况，直接结束，不需要再进行任何判断/跳转
-	# 跳转到 Done 再 ret 会增加 CPE
-	ret
+    # -2 ~ -1
+    iaddq $1, %rdx
+    mrmovq (%rdi), %rbx
+    je handle_remainder_1
+    # 对于余数为 0 的情况，直接结束，不需要再进行任何判断/跳转
+    # 跳转到 Done 再 ret 会增加 CPE
+    ret
 ```
 
 #### 具体余数处理：再戳一戳气泡
@@ -1077,34 +1081,34 @@ handle_remainder_0_to_1:
 
 ```asm
 Loop:
-	mrmovq (%rdi), %r10	# read val from src...
-	rmmovq %r10, (%rsi)	# ...and store it to dst
-	andq %r10, %r10		# val <= 0?
-	jle Npos		# if so, goto Npos:
-	irmovq $1, %r10
-	addq %r10, %rax		# count++
+    mrmovq (%rdi), %r10	# read val from src...
+    rmmovq %r10, (%rsi)	# ...and store it to dst
+    andq %r10, %r10		# val <= 0?
+    jle Npos		# if so, goto Npos:
+    irmovq $1, %r10
+    addq %r10, %rax		# count++
 ```
 
 还记得为什么这段代码效率很低吗？因为其中有很多的气泡，我们列出来：
 
--   mrmovq 到 rmmovq：这会导致数据冒险，在第二条 rmmovq 之前要插 1 个气泡，使得满足如下条件：
+-   `mrmovq` 到 `rmmovq`：这会导致数据冒险，在第二条 `rmmovq` 之前要插 1 个气泡，使得满足如下条件：
 
-    -   mrmovq 在访存 M 阶段
-    -   rmmovq 在译码 D 阶段
-
-    这样才能通过转发正确的 `m_valM` 保证数据的正确性
-
--   mrmovq 到 andq：这同样会导致数据冒险，在第二条 andq 之前要插入 1 个气泡，使得满足如下条件：
-
-    -   mrmovq 在访存 M 阶段
-    -   andq 在译码 D 阶段
+    -   `mrmovq` 在访存 M 阶段
+    -   `rmmovq` 在译码 D 阶段
 
     这样才能通过转发正确的 `m_valM` 保证数据的正确性
 
--   andq 到 jle：这会导致控制冒险，在第二条 jle 之前要插入 1 个气泡，使得满足如下条件：
+-   `mrmovq` 到 `andq`：这同样会导致数据冒险，在第二条 `andq` 之前要插入 1 个气泡，使得满足如下条件：
 
-    -   andq 在访存 M 阶段
-    -   jle 在译码 D 阶段
+    -   `mrmovq` 在访存 M 阶段
+    -   `andq` 在译码 D 阶段
+
+    这样才能通过转发正确的 `m_valM` 保证数据的正确性
+
+-   `andq` 到 `jle`：这会导致控制冒险，在第二条 `jle` 之前要插入 1 个气泡，使得满足如下条件：
+
+    -   `andq` 在访存 M 阶段
+    -   `jle` 在译码 D 阶段
 
     这样才能通过转发正确的 `M_cnd` 以保证预测成功，避免预测失败带来的 2 个气泡惩罚
 
@@ -1112,16 +1116,16 @@ Loop:
 
 ```asm
 handle_remainder_A_to_B:
-	iaddq $1, %rdx # ①
-	mrmovq (%rdi), %rbx # ②
-	je handle_remainder_A # ③
+    iaddq $1, %rdx # ①
+    mrmovq (%rdi), %rbx # ②
+    je handle_remainder_A # ③
 handle_remainder_A:
-	# 进入前已经正确加载数据到 %rbx 中，可以直接开始判断是否大于0
-	andq %rbx, %rbx # ④
-	rmmovq %rbx, 48(%rsi) # ⑤
-	mrmovq 40(%rdi), %rbx # ⑥
-	jle handle_remainder_6 # ⑦
-	iaddq $1, %rax # 对应正数+1
+    # 进入前已经正确加载数据到 %rbx 中，可以直接开始判断是否大于0
+    andq %rbx, %rbx # ④
+    rmmovq %rbx, 48(%rsi) # ⑤
+    mrmovq 40(%rdi), %rbx # ⑥
+    jle handle_remainder_6 # ⑦
+    iaddq $1, %rax # 对应正数+1
 
 ```
 
@@ -1133,7 +1137,7 @@ handle_remainder_A:
 
 ### 最终版本
 
-**请务必不要忘了先参照 PartB 修改 pipe-full.hcl 文件并构建，否则会导致 CPE<1 的离谱 Bug**
+**请务必不要忘了先参照 PartB 修改 `pipe-full.hcl` 文件并构建，否则会导致 CPE<1 的离谱 Bug**
 
 如下就是我们代码的最终版本了：
 
@@ -1164,193 +1168,193 @@ handle_remainder_A:
 ncopy:
 
 ##################################################################
-	# 8路循环展开，优点是余数处理的时候可以平衡地使用二叉树搜索，从而只需要3次平均判断次数
-	iaddq $-8, %rdx
-	jl handle_remainder
-	# 进行8路循环展开，一次性将8个数读入到寄存器中，使用不同的寄存器保证流水线满速运行
-	# 由于使用了不同的寄存器，所以不存在任何的数据冒险，也就不需要暂停，从而可以优化 CPE
+    # 8路循环展开，优点是余数处理的时候可以平衡地使用二叉树搜索，从而只需要3次平均判断次数
+    iaddq $-8, %rdx
+    jl handle_remainder
+    # 进行8路循环展开，一次性将8个数读入到寄存器中，使用不同的寄存器保证流水线满速运行
+    # 由于使用了不同的寄存器，所以不存在任何的数据冒险，也就不需要暂停，从而可以优化 CPE
 loop_unrolling_8_way:
-	mrmovq (%rdi), %r8
-	mrmovq 8(%rdi), %r9
-	mrmovq 16(%rdi), %r10
-	mrmovq 24(%rdi), %r11
-	mrmovq 32(%rdi), %r12
-	mrmovq 40(%rdi), %r13
-	mrmovq 48(%rdi), %r14
-	mrmovq 56(%rdi), %rcx
+    mrmovq (%rdi), %r8
+    mrmovq 8(%rdi), %r9
+    mrmovq 16(%rdi), %r10
+    mrmovq 24(%rdi), %r11
+    mrmovq 32(%rdi), %r12
+    mrmovq 40(%rdi), %r13
+    mrmovq 48(%rdi), %r14
+    mrmovq 56(%rdi), %rcx
 
-	# 判断这8个读入的数据是否大于0，大于0则将其写入到dst中，同时计数器加1
+    # 判断这8个读入的数据是否大于0，大于0则将其写入到dst中，同时计数器加1
 judge_and_write_num_0:
-	# 判断第一个数是否大于0
-	andq %r8, %r8
-	# 通过将 rmmovq 指令插入在读取并设置条件码的步骤与条件跳转 jle 之间
-	# 使得当设置条件码的指令到达 Memory 访存阶段时，jle 刚刚进入 Decode 解码阶段
-	# 从而可以立即使用正确的 M_Cnd，避免控制冒险，即在 Decode 解码阶段就可以知道是否需要跳转
-	# 避免了预测失败时的2个气泡周期的惩罚
-	rmmovq %r8, (%rsi)
-	jle judge_and_write_num_1
-	iaddq $1, %rax
+    # 判断第一个数是否大于0
+    andq %r8, %r8
+    # 通过将 rmmovq 指令插入在读取并设置条件码的步骤与条件跳转 jle 之间
+    # 使得当设置条件码的指令到达 Memory 访存阶段时，jle 刚刚进入 Decode 解码阶段
+    # 从而可以立即使用正确的 M_Cnd，避免控制冒险，即在 Decode 解码阶段就可以知道是否需要跳转
+    # 避免了预测失败时的2个气泡周期的惩罚
+    rmmovq %r8, (%rsi)
+    jle judge_and_write_num_1
+    iaddq $1, %rax
 judge_and_write_num_1:
-	andq %r9, %r9
-	rmmovq %r9, 8(%rsi)
-	jle judge_and_write_num_2
-	iaddq $1, %rax
+    andq %r9, %r9
+    rmmovq %r9, 8(%rsi)
+    jle judge_and_write_num_2
+    iaddq $1, %rax
 judge_and_write_num_2:
-	andq %r10, %r10
-	rmmovq %r10, 16(%rsi)
-	jle judge_and_write_num_3
-	iaddq $1, %rax
+    andq %r10, %r10
+    rmmovq %r10, 16(%rsi)
+    jle judge_and_write_num_3
+    iaddq $1, %rax
 judge_and_write_num_3:
-	andq %r11, %r11
-	rmmovq %r11, 24(%rsi)
-	jle judge_and_write_num_4
-	iaddq $1, %rax
+    andq %r11, %r11
+    rmmovq %r11, 24(%rsi)
+    jle judge_and_write_num_4
+    iaddq $1, %rax
 judge_and_write_num_4:
-	andq %r12, %r12
-	rmmovq %r12, 32(%rsi)
-	jle judge_and_write_num_5
-	iaddq $1, %rax
+    andq %r12, %r12
+    rmmovq %r12, 32(%rsi)
+    jle judge_and_write_num_5
+    iaddq $1, %rax
 judge_and_write_num_5:
-	andq %r13, %r13
-	rmmovq %r13, 40(%rsi)
-	jle judge_and_write_num_6
-	iaddq $1, %rax
+    andq %r13, %r13
+    rmmovq %r13, 40(%rsi)
+    jle judge_and_write_num_6
+    iaddq $1, %rax
 judge_and_write_num_6:
-	andq %r14, %r14
-	rmmovq %r14, 48(%rsi)
-	jle judge_and_write_num_7
-	iaddq $1, %rax
+    andq %r14, %r14
+    rmmovq %r14, 48(%rsi)
+    jle judge_and_write_num_7
+    iaddq $1, %rax
 judge_and_write_num_7:
-	andq %rcx, %rcx
-	rmmovq %rcx, 56(%rsi)
-	jle update_expr
-	iaddq $1, %rax
+    andq %rcx, %rcx
+    rmmovq %rcx, 56(%rsi)
+    jle update_expr
+    iaddq $1, %rax
 update_expr:
-	# 更新循环参数
-	# rdi, rsi 都可以改，因为本次循环中的数据已经被写入到了 dst 中，且完成了正数判断
-	# 所以不会再次使用，只需待循环结束时再去处理余数
-	iaddq $64, %rdi
-	iaddq $64, %rsi
-	iaddq $-8, %rdx
-	# 循环结束条件判断
-	# 注意此时无法使用之前类似的控制冒险优化技术，因为必须知道 rdx 的新值才能确定是否要继续拷贝
-	# 而插入 nop 指令无益于降低 CPE，因为预测失败的情况只有最后才会出现，并导致 2 个气泡周期的惩罚
-	# 但是如果使用 nop 指令，每次循环都会多出 1 个时钟周期
-	jge loop_unrolling_8_way
+    # 更新循环参数
+    # rdi, rsi 都可以改，因为本次循环中的数据已经被写入到了 dst 中，且完成了正数判断
+    # 所以不会再次使用，只需待循环结束时再去处理余数
+    iaddq $64, %rdi
+    iaddq $64, %rsi
+    iaddq $-8, %rdx
+    # 循环结束条件判断
+    # 注意此时无法使用之前类似的控制冒险优化技术，因为必须知道 rdx 的新值才能确定是否要继续拷贝
+    # 而插入 nop 指令无益于降低 CPE，因为预测失败的情况只有最后才会出现，并导致 2 个气泡周期的惩罚
+    # 但是如果使用 nop 指令，每次循环都会多出 1 个时钟周期
+    jge loop_unrolling_8_way
 
 handle_remainder:
-	# 余数处理，采用平衡二叉树搜索的方式，使得平均判断次数为 3 次
-	# -8 ~ -1 -> -4 ~ 3
-	iaddq $4, %rdx
-	# -4 ~ -1
-	jl handle_remainder_0_to_3
+    # 余数处理，采用平衡二叉树搜索的方式，使得平均判断次数为 3 次
+    # -8 ~ -1 -> -4 ~ 3
+    iaddq $4, %rdx
+    # -4 ~ -1
+    jl handle_remainder_0_to_3
 
 handle_remainder_4_to_7:
-	# 0~3 -> -2 ~ 1
-	iaddq $-2, %rdx
-	# -2 ~ -1
-	jl handle_remainder_4_to_5
+    # 0~3 -> -2 ~ 1
+    iaddq $-2, %rdx
+    # -2 ~ -1
+    jl handle_remainder_4_to_5
 
 handle_remainder_6_to_7:
-	# 0 ~ 1
-	# 开始进入到具体余数的处理，此时已经可以开始使用之前的技术来避免暂停，优化 CPE
-	# 正常的过程是：
-	# 1.判断设置状态码
-	# 2.条件跳转（1个气泡的暂停）
-	# 3.加载数据到寄存器
-	# ----
-	# 优化后的过程是
-	# 1.判断设置状态码
-	# 2.加载数据到寄存器
-	# 3.条件跳转
-	# 这可以使得 iaddq 处于访存 Memory 阶段时，je 已经获得了正确的 M_cnd，从而避免预测失败
-	# 同时，可以交替使用“戳气泡”技术来优化数据冒险，即在 mrmovq 和 andq 设置条件码之间插入一条指令（je）
-	# 使得当 mrmovq 处于访存 Memory 阶段时，具体余数处理部分的 andq 进入译码 Decode 阶段
-	# 此时即可以使用转发技术来避免加载/使用冒险，从而避免暂停/气泡，优化 CPE
-	mrmovq 40(%rdi), %rbx
-	je handle_remainder_6
-	# 由于存在转发优先级，所以最新的指令优先级最高
-	# 所以可以直接覆写 %rbx，无需切换寄存器/等待冒泡
-	mrmovq 48(%rdi), %rbx
-	jmp handle_remainder_7
+    # 0 ~ 1
+    # 开始进入到具体余数的处理，此时已经可以开始使用之前的技术来避免暂停，优化 CPE
+    # 正常的过程是：
+    # 1.判断设置状态码
+    # 2.条件跳转（1个气泡的暂停）
+    # 3.加载数据到寄存器
+    # ----
+    # 优化后的过程是
+    # 1.判断设置状态码
+    # 2.加载数据到寄存器
+    # 3.条件跳转
+    # 这可以使得 iaddq 处于访存 Memory 阶段时，je 已经获得了正确的 M_cnd，从而避免预测失败
+    # 同时，可以交替使用“戳气泡”技术来优化数据冒险，即在 mrmovq 和 andq 设置条件码之间插入一条指令（je）
+    # 使得当 mrmovq 处于访存 Memory 阶段时，具体余数处理部分的 andq 进入译码 Decode 阶段
+    # 此时即可以使用转发技术来避免加载/使用冒险，从而避免暂停/气泡，优化 CPE
+    mrmovq 40(%rdi), %rbx
+    je handle_remainder_6
+    # 由于存在转发优先级，所以最新的指令优先级最高
+    # 所以可以直接覆写 %rbx，无需切换寄存器/等待冒泡
+    mrmovq 48(%rdi), %rbx
+    jmp handle_remainder_7
 
 handle_remainder_4_to_5:
-	# -2~-1 -> -1~0
-	iaddq $1, %rdx
-	mrmovq 32(%rdi), %rbx
-	je handle_remainder_5
-	mrmovq 24(%rdi), %rbx
-	jmp handle_remainder_4
+    # -2~-1 -> -1~0
+    iaddq $1, %rdx
+    mrmovq 32(%rdi), %rbx
+    je handle_remainder_5
+    mrmovq 24(%rdi), %rbx
+    jmp handle_remainder_4
 
 handle_remainder_0_to_3:
-	# -4~-1 -> -2 ~ 1
-	iaddq $2, %rdx
-	jl handle_remainder_0_to_1
+    # -4~-1 -> -2 ~ 1
+    iaddq $2, %rdx
+    jl handle_remainder_0_to_1
 
 handle_remainder_2_to_3:
-	# 0~1
-	mrmovq 8(%rdi), %rbx
-	je handle_remainder_2
-	mrmovq 16(%rdi), %rbx
-	jmp handle_remainder_3
+    # 0~1
+    mrmovq 8(%rdi), %rbx
+    je handle_remainder_2
+    mrmovq 16(%rdi), %rbx
+    jmp handle_remainder_3
 
 handle_remainder_0_to_1:
-	# -2 ~ -1
-	iaddq $1, %rdx
-	mrmovq (%rdi), %rbx
-	je handle_remainder_1
-	# 对于余数为 0 的情况，直接结束，不需要再进行任何判断/跳转
-	# 跳转到 Done 再 ret 会增加 CPE
-	ret
+    # -2 ~ -1
+    iaddq $1, %rdx
+    mrmovq (%rdi), %rbx
+    je handle_remainder_1
+    # 对于余数为 0 的情况，直接结束，不需要再进行任何判断/跳转
+    # 跳转到 Done 再 ret 会增加 CPE
+    ret
 
 handle_remainder_7:
-	# 进入前已经正确加载数据到 %rbx 中，可以直接开始判断是否大于0
-	andq %rbx, %rbx
-	rmmovq %rbx, 48(%rsi)
-	mrmovq 40(%rdi), %rbx
-	# 这里同样使用了戳气泡的技术
-	jle handle_remainder_6
-	iaddq $1, %rax
+    # 进入前已经正确加载数据到 %rbx 中，可以直接开始判断是否大于0
+    andq %rbx, %rbx
+    rmmovq %rbx, 48(%rsi)
+    mrmovq 40(%rdi), %rbx
+    # 这里同样使用了戳气泡的技术
+    jle handle_remainder_6
+    iaddq $1, %rax
 handle_remainder_6:
-	andq %rbx, %rbx
-	rmmovq %rbx, 40(%rsi)
-	mrmovq 32(%rdi), %rbx
-	jle handle_remainder_5
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 40(%rsi)
+    mrmovq 32(%rdi), %rbx
+    jle handle_remainder_5
+    iaddq $1, %rax
 handle_remainder_5:
-	andq %rbx, %rbx
-	rmmovq %rbx, 32(%rsi)
-	mrmovq 24(%rdi), %rbx
-	jle handle_remainder_4
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 32(%rsi)
+    mrmovq 24(%rdi), %rbx
+    jle handle_remainder_4
+    iaddq $1, %rax
 handle_remainder_4:
-	andq %rbx, %rbx
-	rmmovq %rbx, 24(%rsi)
-	mrmovq 16(%rdi), %rbx
-	jle handle_remainder_3
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 24(%rsi)
+    mrmovq 16(%rdi), %rbx
+    jle handle_remainder_3
+    iaddq $1, %rax
 handle_remainder_3:
-	andq %rbx, %rbx
-	rmmovq %rbx, 16(%rsi)
-	mrmovq 8(%rdi), %rbx
-	jle handle_remainder_2
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 16(%rsi)
+    mrmovq 8(%rdi), %rbx
+    jle handle_remainder_2
+    iaddq $1, %rax
 handle_remainder_2:
-	andq %rbx, %rbx
-	rmmovq %rbx, 8(%rsi)
-	mrmovq (%rdi), %rbx
-	jle handle_remainder_1
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 8(%rsi)
+    mrmovq (%rdi), %rbx
+    jle handle_remainder_1
+    iaddq $1, %rax
 handle_remainder_1:
-	andq %rbx, %rbx
-	rmmovq %rbx, (%rsi)
-	jle Done
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, (%rsi)
+    jle Done
+    iaddq $1, %rax
 ##################################################################
 # Do not modify the following section of code
 # Function epilogue.
 Done:
-	ret
+    ret
 ##################################################################
 # Keep the following label at the end of your function
 End:
@@ -1392,195 +1396,195 @@ End:
 ncopy:
 
 ##################################################################
-	# 9路循环展开，平均期望劣于8路，但是在数组范围限制在 1~64 时优于8路循环展开
-	# 加权性能分析（可能是错的！），在下式中，每对乘法第一个数代表由于判断带来的暂停气泡周期数，第二个数代表此类余数的个数
-	# 小于号左侧为 9 路循环展开的 CPE，右侧为 8 路循环展开的平均 CPE
-	# (2*8[余1]+3*14[余0、2]+4*42[余3~9]-3[少一次循环判断减少的周期数])/64 = 3.48 < 1+2.5 = 3.5
-	# 平均期望劣于8路：把 -3 删掉，则左式 CPE = 3.53
-	iaddq $-9, %rdx
-	jl handle_remainder
-	# 进行9路展开，一次性将9个数加载到寄存器中，使用不同的寄存器保证流水线满速运行
+    # 9路循环展开，平均期望劣于8路，但是在数组范围限制在 1~64 时优于8路循环展开
+    # 加权性能分析（可能是错的！），在下式中，每对乘法第一个数代表由于判断带来的暂停气泡周期数，第二个数代表此类余数的个数
+    # 小于号左侧为 9 路循环展开的 CPE，右侧为 8 路循环展开的平均 CPE
+    # (2*8[余1]+3*14[余0、2]+4*42[余3~9]-3[少一次循环判断减少的周期数])/64 = 3.48 < 1+2.5 = 3.5
+    # 平均期望劣于8路：把 -3 删掉，则左式 CPE = 3.53
+    iaddq $-9, %rdx
+    jl handle_remainder
+    # 进行9路展开，一次性将9个数加载到寄存器中，使用不同的寄存器保证流水线满速运行
 loop_unrolling_9_way:
-	mrmovq (%rdi), %r8
-	mrmovq 8(%rdi), %r9
-	mrmovq 16(%rdi), %r10
-	mrmovq 24(%rdi), %r11
-	mrmovq 32(%rdi), %r12
-	mrmovq 40(%rdi), %r13
-	mrmovq 48(%rdi), %r14
-	mrmovq 56(%rdi), %rcx
-	mrmovq 64(%rdi), %rbx
+    mrmovq (%rdi), %r8
+    mrmovq 8(%rdi), %r9
+    mrmovq 16(%rdi), %r10
+    mrmovq 24(%rdi), %r11
+    mrmovq 32(%rdi), %r12
+    mrmovq 40(%rdi), %r13
+    mrmovq 48(%rdi), %r14
+    mrmovq 56(%rdi), %rcx
+    mrmovq 64(%rdi), %rbx
 
-	# 判断这9个读入的数据是否大于0，大于0则将其写入到dst中，同时计数器加1
+    # 判断这9个读入的数据是否大于0，大于0则将其写入到dst中，同时计数器加1
 judge_and_write_num_0:
-	# 判断第一个数是否大于0
-	andq %r8, %r8
-	# 通过将 rmmovq 指令插入在读取并设置条件码的步骤与条件跳转 jle 之间
-	# 使得当设置条件码的指令到达 Memory 访存阶段时，jle 刚刚进入 Decode 解码阶段
-	# 从而可以立即使用正确的 M_Cnd，避免控制冒险，即在 Decode 解码阶段就可以知道是否需要跳转
-	# 避免了预测失败时的2个气泡周期的惩罚
-	rmmovq %r8, (%rsi)
-	jle judge_and_write_num_1
-	iaddq $1, %rax
+    # 判断第一个数是否大于0
+    andq %r8, %r8
+    # 通过将 rmmovq 指令插入在读取并设置条件码的步骤与条件跳转 jle 之间
+    # 使得当设置条件码的指令到达 Memory 访存阶段时，jle 刚刚进入 Decode 解码阶段
+    # 从而可以立即使用正确的 M_Cnd，避免控制冒险，即在 Decode 解码阶段就可以知道是否需要跳转
+    # 避免了预测失败时的2个气泡周期的惩罚
+    rmmovq %r8, (%rsi)
+    jle judge_and_write_num_1
+    iaddq $1, %rax
 judge_and_write_num_1:
-	andq %r9, %r9
-	rmmovq %r9, 8(%rsi)
-	jle judge_and_write_num_2
-	iaddq $1, %rax
+    andq %r9, %r9
+    rmmovq %r9, 8(%rsi)
+    jle judge_and_write_num_2
+    iaddq $1, %rax
 judge_and_write_num_2:
-	andq %r10, %r10
-	rmmovq %r10, 16(%rsi)
-	jle judge_and_write_num_3
-	iaddq $1, %rax
+    andq %r10, %r10
+    rmmovq %r10, 16(%rsi)
+    jle judge_and_write_num_3
+    iaddq $1, %rax
 judge_and_write_num_3:
-	andq %r11, %r11
-	rmmovq %r11, 24(%rsi)
-	jle judge_and_write_num_4
-	iaddq $1, %rax
+    andq %r11, %r11
+    rmmovq %r11, 24(%rsi)
+    jle judge_and_write_num_4
+    iaddq $1, %rax
 judge_and_write_num_4:
-	andq %r12, %r12
-	rmmovq %r12, 32(%rsi)
-	jle judge_and_write_num_5
-	iaddq $1, %rax
+    andq %r12, %r12
+    rmmovq %r12, 32(%rsi)
+    jle judge_and_write_num_5
+    iaddq $1, %rax
 judge_and_write_num_5:
-	andq %r13, %r13
-	rmmovq %r13, 40(%rsi)
-	jle judge_and_write_num_6
-	iaddq $1, %rax
+    andq %r13, %r13
+    rmmovq %r13, 40(%rsi)
+    jle judge_and_write_num_6
+    iaddq $1, %rax
 judge_and_write_num_6:
-	andq %r14, %r14
-	rmmovq %r14, 48(%rsi)
-	jle judge_and_write_num_7
-	iaddq $1, %rax
+    andq %r14, %r14
+    rmmovq %r14, 48(%rsi)
+    jle judge_and_write_num_7
+    iaddq $1, %rax
 judge_and_write_num_7:
-	andq %rcx, %rcx
-	rmmovq %rcx, 56(%rsi)
-	jle judge_and_write_num_8
-	iaddq $1, %rax
+    andq %rcx, %rcx
+    rmmovq %rcx, 56(%rsi)
+    jle judge_and_write_num_8
+    iaddq $1, %rax
 judge_and_write_num_8:
-	andq %rbx, %rbx
-	rmmovq %rbx, 64(%rsi)
-	jle update_expr
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 64(%rsi)
+    jle update_expr
+    iaddq $1, %rax
 update_expr:
-	# 更新循环参数
-	# rdi, rsi 都可以改，因为本次循环中的数据已经被写入到了 dst 中，且完成了正数判断
-	# 所以不会再次使用，只需待循环结束时再去处理余数
-	iaddq $72, %rdi
-	iaddq $72, %rsi
-	iaddq $-9, %rdx
-	# 循环结束条件判断
-	# 注意此时无法使用之前类似的控制冒险优化技术，因为必须知道 rdx 的新值才能确定是否要继续拷贝
-	# 而插入 nop 指令无益于降低 CPE，因为预测失败的情况只有最后才会出现，并导致 2 个气泡周期的惩罚
-	# 但是如果使用 nop 指令，每次循环都会多出 1 个时钟周期
-	jge loop_unrolling_9_way
+    # 更新循环参数
+    # rdi, rsi 都可以改，因为本次循环中的数据已经被写入到了 dst 中，且完成了正数判断
+    # 所以不会再次使用，只需待循环结束时再去处理余数
+    iaddq $72, %rdi
+    iaddq $72, %rsi
+    iaddq $-9, %rdx
+    # 循环结束条件判断
+    # 注意此时无法使用之前类似的控制冒险优化技术，因为必须知道 rdx 的新值才能确定是否要继续拷贝
+    # 而插入 nop 指令无益于降低 CPE，因为预测失败的情况只有最后才会出现，并导致 2 个气泡周期的惩罚
+    # 但是如果使用 nop 指令，每次循环都会多出 1 个时钟周期
+    jge loop_unrolling_9_way
 
 handle_remainder:
-	# 余数处理，采用三分法优化
-	# 加权性能分析：在下式中，每对乘法第一个数代表由于判断带来的暂停气泡周期数，第二个数代表此类余数的个数
-	# 小于号左侧为 9 路循环展开的 CPE，右侧为 8 路循环展开的平均 CPE
-	# (2*8[余1]+3*14[余0、2]+4*42[余3~9]-3[少一次循环判断减少的周期数])/64 = 3.48 < 1+2.5 = 3.5
-	# 平均期望劣于8路：把 -3 删掉，则左式 CPE = 3.53
-	# 注意到 64/9 余 1，所以我们优先处理小余数的情况，从而针对性剪枝，优化 CPE
-	iaddq $6, %rdx
-	# 0~2
-	jl handle_remainder_0_to_2
+    # 余数处理，采用三分法优化
+    # 加权性能分析：在下式中，每对乘法第一个数代表由于判断带来的暂停气泡周期数，第二个数代表此类余数的个数
+    # 小于号左侧为 9 路循环展开的 CPE，右侧为 8 路循环展开的平均 CPE
+    # (2*8[余1]+3*14[余0、2]+4*42[余3~9]-3[少一次循环判断减少的周期数])/64 = 3.48 < 1+2.5 = 3.5
+    # 平均期望劣于8路：把 -3 删掉，则左式 CPE = 3.53
+    # 注意到 64/9 余 1，所以我们优先处理小余数的情况，从而针对性剪枝，优化 CPE
+    iaddq $6, %rdx
+    # 0~2
+    jl handle_remainder_0_to_2
 
 handle_remainder_3_to_8:
-	iaddq $-3, %rdx
-	jl handle_remainder_3_to_5
+    iaddq $-3, %rdx
+    jl handle_remainder_3_to_5
 
-	# 开始进入到具体余数的处理，此时已经可以开始使用之前的技术来避免暂停，优化 CPE
-	# 正常的过程是：
-	# 1.判断设置状态码
-	# 2.条件跳转（1个气泡的暂停）
-	# 3.加载数据到寄存器
-	# 优化后的过程是
-	# 1.判断设置状态码
-	# 2.加载数据到寄存器
-	# 3.条件跳转
-	# 同时，可以交替使用“戳气泡”技术来优化数据冒险，即在 mrmovq 和 andq 设置条件码之间插入一条指令（jle）
-	# 使得当 mrmovq 处于访存 M 阶段时，andq 进入译码 D 阶段
-	# 此时即可以使用转发技术来避免加载/使用冒险，从而避免暂停/气泡，优化 CPE
+    # 开始进入到具体余数的处理，此时已经可以开始使用之前的技术来避免暂停，优化 CPE
+    # 正常的过程是：
+    # 1.判断设置状态码
+    # 2.条件跳转（1个气泡的暂停）
+    # 3.加载数据到寄存器
+    # 优化后的过程是
+    # 1.判断设置状态码
+    # 2.加载数据到寄存器
+    # 3.条件跳转
+    # 同时，可以交替使用“戳气泡”技术来优化数据冒险，即在 mrmovq 和 andq 设置条件码之间插入一条指令（jle）
+    # 使得当 mrmovq 处于访存 M 阶段时，andq 进入译码 D 阶段
+    # 此时即可以使用转发技术来避免加载/使用冒险，从而避免暂停/气泡，优化 CPE
 handle_remainder_6_to_8:
-	iaddq $-1, %rdx
-	mrmovq 40(%rdi), %rbx
-	jl handle_remainder_6
-	mrmovq 48(%rdi), %rbx
-	je handle_remainder_7
-	mrmovq 56(%rdi), %rbx
-	jg handle_remainder_8
+    iaddq $-1, %rdx
+    mrmovq 40(%rdi), %rbx
+    jl handle_remainder_6
+    mrmovq 48(%rdi), %rbx
+    je handle_remainder_7
+    mrmovq 56(%rdi), %rbx
+    jg handle_remainder_8
 
 handle_remainder_3_to_5:
-	iaddq $2, %rdx
-	mrmovq 16(%rdi), %rbx
-	jl handle_remainder_3
-	mrmovq 24(%rdi), %rbx
-	je handle_remainder_4
-	mrmovq 32(%rdi), %rbx
-	jg handle_remainder_5
+    iaddq $2, %rdx
+    mrmovq 16(%rdi), %rbx
+    jl handle_remainder_3
+    mrmovq 24(%rdi), %rbx
+    je handle_remainder_4
+    mrmovq 32(%rdi), %rbx
+    jg handle_remainder_5
 
 handle_remainder_0_to_2:
-	iaddq $2, %rdx
-	mrmovq (%rdi), %rbx
-	je handle_remainder_1
-	mrmovq 8(%rdi), %rbx
-	jg handle_remainder_2
-	ret
+    iaddq $2, %rdx
+    mrmovq (%rdi), %rbx
+    je handle_remainder_1
+    mrmovq 8(%rdi), %rbx
+    jg handle_remainder_2
+    ret
 
 handle_remainder_8:
-	# 此时已经正确读取数据到 rbx 中，可以开始判断是否大于0
-	andq %rbx, %rbx
-	rmmovq %rbx, 56(%rsi)
-	mrmovq 48(%rdi), %rbx
-	jle handle_remainder_7
-	iaddq $1, %rax
+    # 此时已经正确读取数据到 rbx 中，可以开始判断是否大于0
+    andq %rbx, %rbx
+    rmmovq %rbx, 56(%rsi)
+    mrmovq 48(%rdi), %rbx
+    jle handle_remainder_7
+    iaddq $1, %rax
 handle_remainder_7:
-	andq %rbx, %rbx
-	rmmovq %rbx, 48(%rsi)
-	mrmovq 40(%rdi), %rbx
-	jle handle_remainder_6
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 48(%rsi)
+    mrmovq 40(%rdi), %rbx
+    jle handle_remainder_6
+    iaddq $1, %rax
 handle_remainder_6:
-	andq %rbx, %rbx
-	rmmovq %rbx, 40(%rsi)
-	mrmovq 32(%rdi), %rbx
-	jle handle_remainder_5
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 40(%rsi)
+    mrmovq 32(%rdi), %rbx
+    jle handle_remainder_5
+    iaddq $1, %rax
 handle_remainder_5:
-	andq %rbx, %rbx
-	rmmovq %rbx, 32(%rsi)
-	mrmovq 24(%rdi), %rbx
-	jle handle_remainder_4
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 32(%rsi)
+    mrmovq 24(%rdi), %rbx
+    jle handle_remainder_4
+    iaddq $1, %rax
 handle_remainder_4:
-	andq %rbx, %rbx
-	rmmovq %rbx, 24(%rsi)
-	mrmovq 16(%rdi), %rbx
-	jle handle_remainder_3
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 24(%rsi)
+    mrmovq 16(%rdi), %rbx
+    jle handle_remainder_3
+    iaddq $1, %rax
 handle_remainder_3:
-	andq %rbx, %rbx
-	rmmovq %rbx, 16(%rsi)
-	mrmovq 8(%rdi), %rbx
-	jle handle_remainder_2
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 16(%rsi)
+    mrmovq 8(%rdi), %rbx
+    jle handle_remainder_2
+    iaddq $1, %rax
 handle_remainder_2:
-	andq %rbx, %rbx
-	rmmovq %rbx, 8(%rsi)
-	mrmovq (%rdi), %rbx
-	jle handle_remainder_1
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, 8(%rsi)
+    mrmovq (%rdi), %rbx
+    jle handle_remainder_1
+    iaddq $1, %rax
 handle_remainder_1:
-	andq %rbx, %rbx
-	rmmovq %rbx, (%rsi)
-	jle Done
-	iaddq $1, %rax
+    andq %rbx, %rbx
+    rmmovq %rbx, (%rsi)
+    jle Done
+    iaddq $1, %rax
 ##################################################################
 # Do not modify the following section of code
 # Function epilogue.
 Done:
-	ret
+    ret
 ##################################################################
 # Keep the following label at the end of your function
 End:
@@ -1596,15 +1600,15 @@ End:
 
 > 转发将一条指令的结果或者一个寄存器的信息直接转发到先前的阶段，从而可以用于该时期的计算或者替代现有的数据作为下一次时钟上升沿的输入。
 
-为什么 `具体余数处理：再戳一戳气泡` 一节中，使用的是 m_valM 而不是 W_valM？
+为什么 `具体余数处理：再戳一戳气泡` 一节中，使用的是 `m_valM` 而不是 `W_valM`？
 
-> 参考上一条，在 mrmovq 的阶段中，m_valM 已经被正确设置，此时已经可以尽早转发替代现有的数据，从而避免暂停。
+> 参考上一条，在 `mrmovq` 的阶段中，`m_valM` 已经被正确设置，此时已经可以尽早转发替代现有的数据，从而避免暂停。
 
 暂停和气泡的区别？
 
 > 暂停：插入一个气泡，但是原有指令的状态保留。用于解决各种冒险
 >
-> 气泡：等价于一条 nop 指令，在 ret 之后会插入三个气泡，即三条空指令。这会导致先前各个阶段的状态 / 寄存器清空。
+> 气泡：等价于一条 `nop` 指令，在 `ret` 之后会插入三个气泡，即三条空指令。这会导致先前各个阶段的状态 / 寄存器清空。
 
 ### 一些别的我觉得可能有用的教程
 
