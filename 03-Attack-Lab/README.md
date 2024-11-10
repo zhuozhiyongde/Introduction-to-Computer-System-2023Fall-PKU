@@ -11,7 +11,7 @@
 首先，进行反编译以得到汇编代码：
 
 ```bash
-objdump -t ctarget > ctarget.s
+objdump -d ctarget > ctarget.s
 ```
 
 查找 `getBuf()` 函数确定调用分配的空间：
