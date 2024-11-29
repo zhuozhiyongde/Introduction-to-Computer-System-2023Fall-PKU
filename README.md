@@ -19,6 +19,61 @@ CSAPP 笔记：
 
 我的笔记可能带有 GPT 内容，请自行甄别。
 
+
+<div align="center">
+  <div>
+    <picture>
+      <source
+        media="(prefers-color-scheme: dark)"
+        srcset="https://next.ossinsight.io/widgets/official/compose-activity-trends/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=dark"
+        width="800"
+        height="auto"
+      />
+      <img
+        alt="Activity Trends of zhuozhiyongde/PKU-Art - Last 28 days"
+        src="https://next.ossinsight.io/widgets/official/compose-activity-trends/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=light"
+        width="800"
+        height="auto"
+      />
+    </picture>
+  </div>
+  &nbsp;
+  <div>
+    <picture>
+      <source
+        media="(prefers-color-scheme: dark)"
+        srcset="https://next.ossinsight.io/widgets/official/compose-last-28-days-stats/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=dark"
+        width="800"
+        height="auto"
+      />
+      <img
+        alt="Performance Stats of zhuozhiyongde/PKU-Art - Last 28 days"
+        src="https://next.ossinsight.io/widgets/official/compose-last-28-days-stats/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=light"
+        width="800"
+        height="auto"
+      />
+    </picture>
+  </div>
+  &nbsp;
+  <div>
+    <picture>
+      <source
+        media="(prefers-color-scheme: dark)"
+        srcset="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=dark"
+        width="800"
+        height="auto"
+      />
+      <img
+        alt="Star History of zhuozhiyongde/PKU-Art"
+        src="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=light"
+        width="800"
+        height="auto"
+      />
+    </picture>
+  </div>
+</div>
+
+
 ## 工具
 
 -   `tldr`：比 `man` 更好用的命令行工具，可以用来查看命令的用例，快速上手命令
