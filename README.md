@@ -30,7 +30,7 @@ CSAPP 笔记：
         height="auto"
       />
       <img
-        alt="Activity Trends of zhuozhiyongde/PKU-Art - Last 28 days"
+        alt="Activity Trends of zhuozhiyongde/Introduction-To-Computer-System-2023Fall-PKU - Last 28 days"
         src="https://next.ossinsight.io/widgets/official/compose-activity-trends/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=light"
         width="800"
         height="auto"
@@ -47,7 +47,7 @@ CSAPP 笔记：
         height="auto"
       />
       <img
-        alt="Performance Stats of zhuozhiyongde/PKU-Art - Last 28 days"
+        alt="Performance Stats of zhuozhiyongde/Introduction-To-Computer-System-2023Fall-PKU - Last 28 days"
         src="https://next.ossinsight.io/widgets/official/compose-last-28-days-stats/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=light"
         width="800"
         height="auto"
@@ -64,7 +64,7 @@ CSAPP 笔记：
         height="auto"
       />
       <img
-        alt="Star History of zhuozhiyongde/PKU-Art"
+        alt="Star History of zhuozhiyongde/Introduction-To-Computer-System-2023Fall-PKU"
         src="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=light"
         width="800"
         height="auto"
