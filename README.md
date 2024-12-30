@@ -19,7 +19,6 @@ CSAPP 笔记：
 
 我的笔记可能带有 GPT 内容，请自行甄别。
 
-
 <div align="center">
   <div>
     <picture>
@@ -73,7 +72,6 @@ CSAPP 笔记：
   </div>
 </div>
 
-
 ## 工具
 
 -   `tldr`：比 `man` 更好用的命令行工具，可以用来查看命令的用例，快速上手命令
@@ -102,12 +100,21 @@ Host ICS
 
 在 2024 年，我成为了 ICS 课程的助教，我的小班回课 PPT 可以在 [Arthals-ICS-Slide](https://slide.huh.moe/) 中找到（需要北大内网）。
 
-目前有：
+0. [课程介绍](https://slide.huh.moe/00/)
+1. [数据表示](https://slide.huh.moe/01/)
+2. [程序的机器表示 I](https://slide.huh.moe/02/)
+3. [程序的机器表示 II](https://slide.huh.moe/03/)
+4. [程序的机器表示 III & ISA](https://slide.huh.moe/04/)
+5. [处理器架构：顺序与流水线](https://slide.huh.moe/05/)
+6. [存储器层次结构、缓存](https://slide.huh.moe/06/)
+7. [链接](https://slide.huh.moe/07/)
+8. [异常控制流](https://slide.huh.moe/08/)
+9. [虚拟内存](https://slide.huh.moe/09/)
+10. [系统级 IO](https://slide.huh.moe/10/)
+11. [网络编程](https://slide.huh.moe/11/)
+12. [并发编程](https://slide.huh.moe/12/)
 
-1. [课程介绍 / Introduction](https://slide.huh.moe/00/)
-2. [数据表示 / Data Representation](https://slide.huh.moe/01/)
-3. [程序的机器表示 I / Machine Programming I](https://slide.huh.moe/02/)
-4. [程序的机器表示 II / Machine Programming II](https://slide.huh.moe/03/)
+如果你无法访问北大内网，你也可以根据 [源代码](https://github.com/zhuozhiyongde/Arthals-ICS-Slides/) 自行构建。
 
 ## 笔记
 
