@@ -91,13 +91,6 @@ Host ICS
 
 推荐使用 [Slidev](https://sli.dev/)，通过 `Markdown` 和成熟的前端技术、工具链，可以快速制作出漂亮的 PPT。
 
-我的两次回课：
-
--   [Pre-Arch](https://pre.arthals.ink/)
--   [Pre-Conc](https://pre2.arthals.ink/)
-
-源码可在 `回课` 文件夹中找到。
-
 在 2024 年，我成为了 ICS 课程的助教，我的小班回课 PPT 可以在 [Arthals-ICS-Slide](https://slide.huh.moe/) 中找到（需要北大内网）。
 
 0. [课程介绍](https://slide.huh.moe/00/)
