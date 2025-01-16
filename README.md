@@ -3,21 +3,9 @@
 更适合北大宝宝体质的 ICS 辅助学习资料
 
 -   含往年题勘误、期中期末考试复习细节整理
+-   含 CSAPP 笔记版，便于初学者上手（但其中可能存在错误！）
 -   含各种魔改的 Lab，包括详细准备操作、解释步骤，与各种踩坑
 -   奉行能偷懒就偷懒的原则，Bomb Lab 的 secret phase，Proxy Lab 的 HTTPS 部分因为不计入成绩，所以都没有写
-
-我不建议你上来就看我写的 lab 踩坑记，因为这可能对你的思考并无好处。
-
-CSAPP 笔记：
-
-深入理解计算机系统-笔记版-by Arthals & EmptyBlueBox
-
--   GoodNotes 格式：https://disk.pku.edu.cn/link/AA46F302BBA11A4E73AAAA4FA1AED1FD98
--   PDF 格式：https://disk.pku.edu.cn/link/AA834F941EFC62489DA7DBEEA2659CDCD5
-
-提取码：csapp
-
-我的笔记可能带有 GPT 内容，请自行甄别。
 
 <div align="center">
   <div>
@@ -111,6 +99,29 @@ Host ICS
 
 ## 笔记
 
+### CSAPP
+
+CSAPP 笔记：
+
+深入理解计算机系统-笔记版-by Arthals & EmptyBlueBox
+
+-   GoodNotes 格式：https://disk.pku.edu.cn/link/AA46F302BBA11A4E73AAAA4FA1AED1FD98
+-   PDF 格式：https://disk.pku.edu.cn/link/AA834F941EFC62489DA7DBEEA2659CDCD5
+
+提取码：csapp
+
+我的笔记可能带有 GPT 内容，请自行甄别。
+
+其中亦存在部分错误，请保持审慎的态度进行阅读。
+
+### Lab
+
+> [!CAUTION]
+>
+> **致各位同学：本笔记的撰写目的是用作参考，请勿直接抄袭，否则后果自负。**
+
+我不建议你上来就看我写的 lab 踩坑记，因为这可能对你的思考并无好处。
+
 建议直接我的博客直接阅览我的笔记，因为我会优先在博客更新勘误。你也可以在各个 Lab 文件夹的 README 中获得，但可能会有所落后。
 
 -   [Data Lab](https://arthals.ink/blog/data-lab)
@@ -121,6 +132,21 @@ Host ICS
 -   [Tsh Lab](https://arthals.ink/blog/tsh-lab)
 -   [Malloc Lab](https://arthals.ink/blog/malloc-lab)
 -   [Proxy Lab](https://arthals.ink/blog/proxy-lab)
+
+### 往年题、考试复习
+
+详见 [复习资料](复习资料/) 文件夹。
+
+由我整理的：
+
+-   期中考试复习细节.md
+-   期末考试复习细节.md
+
+由 [Sparkle](https://github.com/Sparkle-PKU) 整理的：
+
+-   ICS 刷题指南与复习指导.pdf
+-   ICS 期末复习.pdf
+-   ICS 期末错题梳理.pdf
 
 ## 经验
 
@@ -139,6 +165,8 @@ Q：刷往年题一套刷了好几个小时正常吗？
 > A：正常，特别是第一套往年题，如果你过程调用式复习的话，第一套刷 10 个小时都是正常的。但是随着你刷的越来越多，没见过的题型越来越少，这个时间会越来越短。
 >
 > 值得注意的是，ICS 的复习以课本为第一优先级，拟合往年题并不能保证你取得好成绩。
+>
+> 推荐查看 [ICS 刷题指南与复习指导](复习资料/ICS刷题指南与复习指导.pdf) 以获取往年题的合理复习规划。
 
 ## 参考 & 引用
 
@@ -177,3 +205,4 @@ Q：刷往年题一套刷了好几个小时正常吗？
 -   [thezzisu](https://github.com/thezzisu)：我的 ICS 助教，为我和我的小班课同学解答了很多问题。
 -   [CS-icez](https://github.com/CS-icez)：素未谋面的卷王王中王，他的优化代码令我叹为观止。
 -   [HenryHuang2004](https://github.com/HenryHuang2004)：一起学 ICS 的同学，我们一同探讨了许多往年题的问题。
+-   [Sparkle](https://github.com/Sparkle-PKU)：充满干劲的学弟，提供了部分高质量的复习资料！
