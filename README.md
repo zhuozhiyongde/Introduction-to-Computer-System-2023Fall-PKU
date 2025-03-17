@@ -29,23 +29,6 @@
     <picture>
       <source
         media="(prefers-color-scheme: dark)"
-        srcset="https://next.ossinsight.io/widgets/official/compose-last-28-days-stats/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=dark"
-        width="800"
-        height="auto"
-      />
-      <img
-        alt="Performance Stats of zhuozhiyongde/Introduction-To-Computer-System-2023Fall-PKU - Last 28 days"
-        src="https://next.ossinsight.io/widgets/official/compose-last-28-days-stats/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=light"
-        width="800"
-        height="auto"
-      />
-    </picture>
-  </div>
-  &nbsp;
-  <div>
-    <picture>
-      <source
-        media="(prefers-color-scheme: dark)"
         srcset="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=695888614&image_size=auto&color_scheme=dark"
         width="800"
         height="auto"
@@ -103,7 +86,7 @@ Host ICS
 
 CSAPP 笔记：
 
-深入理解计算机系统-笔记版-by Arthals & EmptyBlueBox
+深入理解计算机系统 - 笔记版-by Arthals & EmptyBlueBox
 
 -   GoodNotes 格式：https://disk.pku.edu.cn/link/AA46F302BBA11A4E73AAAA4FA1AED1FD98
 -   PDF 格式：https://disk.pku.edu.cn/link/AA834F941EFC62489DA7DBEEA2659CDCD5
