@@ -62,23 +62,23 @@ Host ICS
 
 推荐使用 [Slidev](https://sli.dev/)，通过 `Markdown` 和成熟的前端技术、工具链，可以快速制作出漂亮的 PPT。
 
-在 2024 年，我成为了 ICS 课程的助教，我的小班回课 PPT 可以在 [Arthals-ICS-Slide](https://slide.huh.moe/) 中找到（需要北大内网）。
+在 2024 年，我成为了 ICS 课程的助教，我的小班回课 PPT 可以在 [Arthals-ICS-Slide](https://slide.huh.moe/) 中找到。
 
-0. [课程介绍](https://slide.huh.moe/00/)
-1. [数据表示](https://slide.huh.moe/01/)
-2. [程序的机器表示 I](https://slide.huh.moe/02/)
-3. [程序的机器表示 II](https://slide.huh.moe/03/)
-4. [程序的机器表示 III & ISA](https://slide.huh.moe/04/)
-5. [处理器架构：顺序与流水线](https://slide.huh.moe/05/)
-6. [存储器层次结构、缓存](https://slide.huh.moe/06/)
-7. [链接](https://slide.huh.moe/07/)
-8. [异常控制流](https://slide.huh.moe/08/)
-9. [虚拟内存](https://slide.huh.moe/09/)
-10. [系统级 IO](https://slide.huh.moe/10/)
-11. [网络编程](https://slide.huh.moe/11/)
-12. [并发编程](https://slide.huh.moe/12/)
+1. [课程介绍](https://slide.huh.moe/00/)
+2. [数据表示](https://slide.huh.moe/01/)
+3. [程序的机器表示 I](https://slide.huh.moe/02/)
+4. [程序的机器表示 II](https://slide.huh.moe/03/)
+5. [程序的机器表示 III & ISA](https://slide.huh.moe/04/)
+6. [处理器架构：顺序与流水线](https://slide.huh.moe/05/)
+7. [存储器层次结构、缓存](https://slide.huh.moe/06/)
+8. [链接](https://slide.huh.moe/07/)
+9. [异常控制流](https://slide.huh.moe/08/)
+10. [虚拟内存](https://slide.huh.moe/09/)
+11. [系统级 IO](https://slide.huh.moe/10/)
+12. [网络编程](https://slide.huh.moe/11/)
+13. [并发编程](https://slide.huh.moe/12/)
 
-如果你无法访问北大内网，你也可以根据 [源代码](https://github.com/zhuozhiyongde/Arthals-ICS-Slides/) 自行构建。
+同时，你也可以根据 [源代码](https://github.com/zhuozhiyongde/Arthals-ICS-Slides/) 自行构建。
 
 ## 笔记
 
