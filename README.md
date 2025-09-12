@@ -43,10 +43,10 @@
   </div>
 </div>
 
-## 工具
+## 🛠️ 工具
 
 -   `tldr`：比 `man` 更好用的命令行工具，可以用来查看命令的用例，快速上手命令
--   `VS Code Remote - SSH`：VS Code 的远程开发插件，可以用来远程开发。对于使用云服务器 / Class Machine 的同学尤为推荐
+-   `VS Code Remote - SSH`：VS Code 的远程开发插件，可以用来远程开发。对于使用云服务器 / Clab 的同学尤为推荐
 
 注：如果你使用 [PKU VPN 3 - 用校内服务器实现 PKU 内网和 Clash/Surge 兼容使用](https://arthals.ink/blog/pku-vpn-internal-server) 中提到的方式链接北大内网，那么你需要配置 `~/.ssh/config` 如下：
 
@@ -58,7 +58,7 @@ Host ICS
 
 其中 HostName 为你的 Tailscale 内网 IP，User 为你的用户名。
 
-## 回课
+## 📚 回课
 
 推荐使用 [Slidev](https://sli.dev/)，通过 `Markdown` 和成熟的前端技术、工具链，可以快速制作出漂亮的 PPT。
 
@@ -80,7 +80,7 @@ Host ICS
 
 同时，你也可以根据 [源代码](https://github.com/zhuozhiyongde/Arthals-ICS-Slides/) 自行构建。
 
-## 笔记
+## 📝 笔记
 
 ### CSAPP
 
@@ -116,7 +116,7 @@ CSAPP 笔记：
 -   [Malloc Lab](https://arthals.ink/blog/malloc-lab)
 -   [Proxy Lab](https://arthals.ink/blog/proxy-lab)
 
-### 往年题、考试复习
+### 💯 往年题、考试复习
 
 详见 [复习资料](复习资料/) 文件夹。
 
@@ -131,7 +131,7 @@ CSAPP 笔记：
 -   ICS 期末复习.pdf
 -   ICS 期末错题梳理.pdf
 
-## 经验
+## 💡 经验
 
 Q：如何正确的读书？
 
@@ -139,7 +139,7 @@ Q：如何正确的读书？
 
 Q：Class Machine 能不能用？
 
-> A：能用，但是我认为唯一必须要用 Class Machine 的 lab 就是 Attack Lab（因为 Attack Lab 需要考虑 ASLR 等问题，最好使用助教配置好的 Autolab）。其他的 lab 推荐自己购置一台云服务器（如腾讯轻量云、阿里云 ECS 等），因为 Class Machine 是不连接外网的，所以装环境 / 下载文件都很麻烦，而且即便是 Bomb lab，如果你熟悉了怎么安全化炸弹之后也都不需要 Classs Machine（不过可能当你做完之后提交时会需要一下）。而且自己购置的云服务器可以用来做其他事情，比如搭建个人博客等，这些折腾都会成为你宝贵的经验。
+> ~~A：能用，但是我认为唯一必须要用 Class Machine 的 lab 就是 Attack Lab（因为 Attack Lab 需要考虑 ASLR 等问题，最好使用助教配置好的 Autolab）。其他的 lab 推荐自己购置一台云服务器（如腾讯轻量云、阿里云 ECS 等），因为 Class Machine 是不连接外网的，所以装环境 / 下载文件都很麻烦，而且即便是 Bomb lab，如果你熟悉了怎么安全化炸弹之后也都不需要 Classs Machine（不过可能当你做完之后提交时会需要一下）。而且自己购置的云服务器可以用来做其他事情，比如搭建个人博客等，这些折腾都会成为你宝贵的经验。~~
 >
 > Update：自 2024 年以后，北大 ICS 课程已经转为使用 Clab 来完成实验，所以上面的话你可以忽略啦！
 
@@ -151,7 +151,7 @@ Q：刷往年题一套刷了好几个小时正常吗？
 >
 > 推荐查看 [ICS 刷题指南与复习指导](复习资料/ICS刷题指南与复习指导.pdf) 以获取往年题的合理复习规划。
 
-## 参考 & 引用
+## 📜 参考 & 引用
 
 -   [EmptyBlueBox / 2022_Fall_PKU_Introduction-to-Computer-System](https://github.com/EmptyBlueBox/2022_Fall_PKU_Introduction-to-Computer-System)：来自卷王的资料
 -   [CS-icez / introduction-to-computer-systems](https://github.com/CS-icez/introduction-to-computer-systems)：来自卷王王中王的资料，各个 lab 的奇技淫巧都可以在此一窥究竟。
@@ -164,11 +164,11 @@ Q：刷往年题一套刷了好几个小时正常吗？
 -   [CMU / HCL Descriptions of Y86-64 Processors](https://csapp.cs.cmu.edu/3e/waside/waside-hcl.pdf)：Y86-64 指令集，HCL 完整版，第四章 Arch 复习必备
 -   [江枫渔火 / CSAPP Lab](https://www.zhihu.com/column/c_1405316339096031232)：和我一样，写的也是 PKU 的魔改版 lab，可惜只写了几篇，没有写完。可以作为参考。
 
-## 广告
+## 📢 广告
 
 [PKU Art](https://arthals.ink/posts/web/pku-art)：教学网美化样式
 
-## 后记
+## ✨ 后记
 
 虽然考完期末后的我也曾心怀不甘，觉得一个学期的努力就这么付诸东流，但当我无暇悲伤而又立刻紧张地投入到 ICS 之后一场又一场的考试中时，当我考完所有试回到家中静下心来整理这份资料时，这些不甘、愤懑、悲戚的情绪似乎也就自然而然地淡了下来。
 
@@ -189,3 +189,9 @@ Q：刷往年题一套刷了好几个小时正常吗？
 -   [CS-icez](https://github.com/CS-icez)：素未谋面的卷王王中王，他的优化代码令我叹为观止。
 -   [HenryHuang2004](https://github.com/HenryHuang2004)：一起学 ICS 的同学，我们一同探讨了许多往年题的问题。
 -   [Sparkle](https://github.com/Sparkle-PKU)：充满干劲的学弟，提供了部分高质量的复习资料！
+
+<div align="right">
+
+![signature](README.assets/signature.svg)
+
+</div>
