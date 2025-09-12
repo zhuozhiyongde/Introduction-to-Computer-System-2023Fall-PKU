@@ -45,7 +45,7 @@
 
 ## 🛠️ 工具
 
--   `tldr`：比 `man` 更好用的命令行工具，可以用来查看命令的用例，快速上手命令
+-   ~~`tldr`：比 `man` 更好用的命令行工具，可以用来查看命令的用例，快速上手命令~~ 2025 年了，弗如 GPT / Gemini
 -   `VS Code Remote - SSH`：VS Code 的远程开发插件，可以用来远程开发。对于使用云服务器 / Clab 的同学尤为推荐
 
 注：如果你使用 [PKU VPN 3 - 用校内服务器实现 PKU 内网和 Clash/Surge 兼容使用](https://arthals.ink/blog/pku-vpn-internal-server) 中提到的方式链接北大内网，那么你需要配置 `~/.ssh/config` 如下：
@@ -116,7 +116,7 @@ CSAPP 笔记：
 -   [Malloc Lab](https://arthals.ink/blog/malloc-lab)
 -   [Proxy Lab](https://arthals.ink/blog/proxy-lab)
 
-### 💯 往年题、考试复习
+### 往年题、考试复习
 
 详见 [复习资料](复习资料/) 文件夹。
 
