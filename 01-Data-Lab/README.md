@@ -795,7 +795,7 @@ int float64_f2i(unsigned uf1, unsigned uf2) {
         return 0;
     if (exp >= 31)
         return 0x80000000;
-    frac = (frac >> (31 - exp)) & ~(0x80000000 >> (31 - exp) << 1); // 避免算数右移导致的前导 1
+    frac = (frac >> (31 - exp));
     if (sign)
         return -frac;
     return frac;
