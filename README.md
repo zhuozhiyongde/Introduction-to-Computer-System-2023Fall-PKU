@@ -1,4 +1,4 @@
-# Introduction-To-Computer-System-2023Fall-PKU
+# Introduction-to-Computer-System-2023Fall-PKU
 
 更适合北大宝宝体质的 ICS 辅助学习资料
 
